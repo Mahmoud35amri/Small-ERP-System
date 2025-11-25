@@ -37,8 +37,13 @@ public class ViewManager {
 
     public void showView(String viewName) {
         if (views.containsKey(viewName)) {
+            Node view = views.get(viewName);
             contentArea.getChildren().clear();
-            contentArea.getChildren().add(views.get(viewName));
+            contentArea.getChildren().add(view);
+
+            if (view instanceof Refreshable) {
+                ((Refreshable) view).refresh();
+            }
         }
     }
 

@@ -2,16 +2,13 @@ package com.minierp.controller;
 
 import com.minierp.model.Commande;
 import com.minierp.model.LigneCommande;
+import com.minierp.service.EntrepriseRegistry;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandeController {
     private static CommandeController instance;
-    private final List<Commande> commandes = new CopyOnWriteArrayList<>();
-    private final AtomicInteger idGenerator = new AtomicInteger(1);
 
     private CommandeController() {
     }
@@ -23,8 +20,16 @@ public class CommandeController {
         return instance;
     }
 
+    // Helper to get current entreprise's orders
+    private List<Commande> getCommandes() {
+        return EntrepriseRegistry.current().commandes;
+    }
+
     public Commande creer(Commande c) {
-        c.setId(idGenerator.getAndIncrement());
+        List<Commande> commandes = getCommandes();
+        // Simple ID generation
+        int maxId = commandes.stream().mapToInt(Commande::getId).max().orElse(0);
+        c.setId(maxId + 1);
         c.setDate(LocalDate.now());
         c.setStatus("BROUILLON");
         commandes.add(c);
@@ -32,7 +37,7 @@ public class CommandeController {
     }
 
     private Commande findById(int id) {
-        return commandes.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+        return getCommandes().stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public void ajouterLigne(int commandeId, LigneCommande ligne) {
@@ -106,6 +111,6 @@ public class CommandeController {
     }
 
     public List<Commande> lister() {
-        return new ArrayList<>(commandes);
+        return new ArrayList<>(getCommandes());
     }
 }

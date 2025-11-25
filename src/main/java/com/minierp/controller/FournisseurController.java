@@ -1,15 +1,12 @@
 package com.minierp.controller;
 
 import com.minierp.model.Fournisseur;
+import com.minierp.service.EntrepriseRegistry;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class FournisseurController {
     private static FournisseurController instance;
-    private final List<Fournisseur> fournisseurs = new CopyOnWriteArrayList<>();
-    private final AtomicInteger idGenerator = new AtomicInteger(1);
 
     private FournisseurController() {
     }
@@ -21,11 +18,19 @@ public class FournisseurController {
         return instance;
     }
 
+    // Helper to get current entreprise's suppliers
+    private List<Fournisseur> getFournisseurs() {
+        return EntrepriseRegistry.current().fournisseurs;
+    }
+
     public Fournisseur creer(Fournisseur f) {
         if (f.getNomSociete() == null || f.getNomSociete().isEmpty()) {
             throw new IllegalArgumentException("Nom Societe is required");
         }
-        f.setId(idGenerator.getAndIncrement());
+        List<Fournisseur> fournisseurs = getFournisseurs();
+        // Simple ID generation
+        int maxId = fournisseurs.stream().mapToInt(Fournisseur::getId).max().orElse(0);
+        f.setId(maxId + 1);
         fournisseurs.add(f);
         return f;
     }
@@ -34,6 +39,7 @@ public class FournisseurController {
         if (f.getId() == 0) {
             throw new IllegalArgumentException("ID is required for update");
         }
+        List<Fournisseur> fournisseurs = getFournisseurs();
         for (int i = 0; i < fournisseurs.size(); i++) {
             if (fournisseurs.get(i).getId() == f.getId()) {
                 fournisseurs.set(i, f);
@@ -44,13 +50,14 @@ public class FournisseurController {
     }
 
     public List<Fournisseur> lister() {
-        return new ArrayList<>(fournisseurs);
+        return new ArrayList<>(getFournisseurs());
     }
 
     public void evaluer(int id, int note) {
         if (note < 1 || note > 5) {
             throw new IllegalArgumentException("Note must be between 1 and 5");
         }
+        List<Fournisseur> fournisseurs = getFournisseurs();
         for (Fournisseur f : fournisseurs) {
             if (f.getId() == id) {
                 f.setEvaluation(note);

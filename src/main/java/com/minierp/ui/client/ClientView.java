@@ -26,7 +26,7 @@ import org.controlsfx.validation.Validator;
 
 import java.util.Optional;
 
-public class ClientView extends BorderPane {
+public class ClientView extends BorderPane implements com.minierp.ui.Refreshable {
 
     private final ClientController clientController = ClientController.getInstance();
     private final CommandeController commandeController = CommandeController.getInstance();
@@ -41,6 +41,13 @@ public class ClientView extends BorderPane {
     public ClientView() {
         getStylesheets().add(getClass().getResource("/css/client.css").toExternalForm());
         initializeUI();
+        refresh();
+    }
+
+    // ...
+
+    @Override
+    public void refresh() {
         refreshTable();
     }
 

@@ -24,7 +24,7 @@ import org.controlsfx.validation.Validator;
 
 import java.time.LocalDateTime;
 
-public class UtilisateurView extends BorderPane {
+public class UtilisateurView extends BorderPane implements com.minierp.ui.Refreshable {
     private TableView<Utilisateur> table;
     private UtilisateurController controller;
 
@@ -124,7 +124,8 @@ public class UtilisateurView extends BorderPane {
         table.refresh();
     }
 
-    private void refresh() {
+    @Override
+    public void refresh() {
         table.setItems(FXCollections.observableArrayList(controller.getAll()));
         table.refresh();
     }

@@ -25,7 +25,7 @@ import org.controlsfx.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 
-public class ProduitView extends BorderPane {
+public class ProduitView extends BorderPane implements com.minierp.ui.Refreshable {
 
     private final ProduitController produitController = ProduitController.getInstance();
     private final CategorieController categorieController = CategorieController.getInstance();
@@ -38,6 +38,13 @@ public class ProduitView extends BorderPane {
     public ProduitView() {
         getStylesheets().add(getClass().getResource("/css/produit.css").toExternalForm());
         initializeUI();
+        refresh();
+    }
+
+    // ...
+
+    @Override
+    public void refresh() {
         refreshTable();
     }
 

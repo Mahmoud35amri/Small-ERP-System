@@ -21,11 +21,17 @@ public class SessionService {
     public Utilisateur login(String email, String password) throws Exception {
         Utilisateur user = UtilisateurController.getInstance().authentifier(email, password);
         this.connectedUser = user;
+
+        // Switch to user's entreprise context
+        EntrepriseRegistry.getInstance().switchTo(user.getEntrepriseId());
+
         return user;
     }
 
     public void logout() {
         this.connectedUser = null;
+        // Optionally clear current entreprise context, but registry keeps it until next
+        // switch
     }
 
     public Utilisateur getConnectedUser() {

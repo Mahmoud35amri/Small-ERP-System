@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class CommandeView extends BorderPane {
+public class CommandeView extends BorderPane implements com.minierp.ui.Refreshable {
 
     private final CommandeController commandeController = CommandeController.getInstance();
     private final ClientController clientController = ClientController.getInstance();
@@ -41,6 +41,13 @@ public class CommandeView extends BorderPane {
     public CommandeView() {
         getStylesheets().add(getClass().getResource("/css/commande.css").toExternalForm());
         initializeUI();
+        refresh();
+    }
+
+    // ... existing code ...
+
+    @Override
+    public void refresh() {
         refreshTable();
     }
 

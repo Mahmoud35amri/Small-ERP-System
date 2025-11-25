@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CategorieView extends BorderPane {
+public class CategorieView extends BorderPane implements com.minierp.ui.Refreshable {
 
     private final CategorieController categorieController = CategorieController.getInstance();
     private final ProduitController produitController = ProduitController.getInstance();
@@ -33,6 +33,11 @@ public class CategorieView extends BorderPane {
     public CategorieView() {
         getStylesheets().add(getClass().getResource("/css/categorie.css").toExternalForm());
         initializeUI();
+        refresh();
+    }
+
+    @Override
+    public void refresh() {
         refreshTree();
     }
 

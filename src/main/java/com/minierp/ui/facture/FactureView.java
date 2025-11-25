@@ -16,7 +16,7 @@ import org.controlsfx.control.Notifications;
 
 import java.time.format.DateTimeFormatter;
 
-public class FactureView extends BorderPane {
+public class FactureView extends BorderPane implements com.minierp.ui.Refreshable {
 
     private final FactureController factureController = FactureController.getInstance();
     private TableView<Facture> table;
@@ -24,12 +24,19 @@ public class FactureView extends BorderPane {
     public FactureView() {
         getStylesheets().add(getClass().getResource("/css/facture.css").toExternalForm());
         initializeUI();
-        refreshTable();
+        refresh();
         sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
                 refreshTable();
             }
         });
+    }
+
+    // ...
+
+    @Override
+    public void refresh() {
+        refreshTable();
     }
 
     private void initializeUI() {

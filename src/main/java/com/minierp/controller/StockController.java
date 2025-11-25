@@ -2,18 +2,13 @@ package com.minierp.controller;
 
 import com.minierp.model.MouvementStock;
 import com.minierp.model.Stock;
+import com.minierp.service.EntrepriseRegistry;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class StockController {
     private static StockController instance;
-    private final List<Stock> stocks = new CopyOnWriteArrayList<>();
-    private final List<MouvementStock> mouvements = new CopyOnWriteArrayList<>();
-    private final AtomicInteger stockIdGenerator = new AtomicInteger(1);
-    private final AtomicInteger mouvementIdGenerator = new AtomicInteger(1);
 
     private StockController() {
     }
@@ -25,11 +20,23 @@ public class StockController {
         return instance;
     }
 
+    // Helper to get current entreprise's stocks
+    private List<Stock> getStocks() {
+        return EntrepriseRegistry.current().stocks;
+    }
+
+    // Helper to get current entreprise's stock movements
+    private List<MouvementStock> getMouvements() {
+        return EntrepriseRegistry.current().mouvementsStock;
+    }
+
     public void ajouter(int produitId, int qte) {
         Stock stock = getStockByProduit(produitId);
         stock.setQuantiteActuelle(stock.getQuantiteActuelle() + qte);
 
-        MouvementStock mvt = new MouvementStock(mouvementIdGenerator.getAndIncrement(), produitId, "AJOUT", qte,
+        List<MouvementStock> mouvements = getMouvements();
+        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
+        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "AJOUT", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
 
@@ -44,7 +51,9 @@ public class StockController {
         }
         stock.setQuantiteActuelle(stock.getQuantiteActuelle() - qte);
 
-        MouvementStock mvt = new MouvementStock(mouvementIdGenerator.getAndIncrement(), produitId, "RETRAIT", qte,
+        List<MouvementStock> mouvements = getMouvements();
+        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
+        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "RETRAIT", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
 
@@ -59,7 +68,9 @@ public class StockController {
         }
         stock.setQuantiteReservee(stock.getQuantiteReservee() + qte);
 
-        MouvementStock mvt = new MouvementStock(mouvementIdGenerator.getAndIncrement(), produitId, "RESERVATION", qte,
+        List<MouvementStock> mouvements = getMouvements();
+        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
+        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "RESERVATION", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
     }
@@ -71,7 +82,9 @@ public class StockController {
         }
         stock.setQuantiteReservee(stock.getQuantiteReservee() - qte);
 
-        MouvementStock mvt = new MouvementStock(mouvementIdGenerator.getAndIncrement(), produitId, "LIBERATION", qte,
+        List<MouvementStock> mouvements = getMouvements();
+        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
+        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "LIBERATION", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
     }
@@ -79,23 +92,28 @@ public class StockController {
     public void initialiserStock(int produitId, int qte) {
         Stock stock = getStockByProduit(produitId);
         stock.setQuantiteActuelle(qte);
-        MouvementStock mvt = new MouvementStock(mouvementIdGenerator.getAndIncrement(), produitId, "INITIAL", qte,
+
+        List<MouvementStock> mouvements = getMouvements();
+        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
+        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "INITIAL", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
     }
 
     public List<MouvementStock> historiser(int produitId) {
-        return mouvements.stream()
+        return getMouvements().stream()
                 .filter(m -> m.getProduitId() == produitId)
                 .collect(Collectors.toList());
     }
 
     public Stock getStockByProduit(int produitId) {
+        List<Stock> stocks = getStocks();
         return stocks.stream()
                 .filter(s -> s.getProduitId() == produitId)
                 .findFirst()
                 .orElseGet(() -> {
-                    Stock s = new Stock(stockIdGenerator.getAndIncrement(), produitId, 0, 0);
+                    int maxId = stocks.stream().mapToInt(Stock::getId).max().orElse(0);
+                    Stock s = new Stock(maxId + 1, produitId, 0, 0);
                     stocks.add(s);
                     return s;
                 });

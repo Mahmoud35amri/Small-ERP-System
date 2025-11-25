@@ -21,7 +21,7 @@ import org.controlsfx.control.Notifications;
 
 import java.util.Optional;
 
-public class StockView extends BorderPane {
+public class StockView extends BorderPane implements com.minierp.ui.Refreshable {
 
     private final StockController stockController = StockController.getInstance();
     private final ProduitController produitController = ProduitController.getInstance();

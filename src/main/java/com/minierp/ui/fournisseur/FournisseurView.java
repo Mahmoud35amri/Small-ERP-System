@@ -31,7 +31,7 @@ import org.controlsfx.validation.Validator;
 
 import java.util.Optional;
 
-public class FournisseurView extends BorderPane {
+public class FournisseurView extends BorderPane implements com.minierp.ui.Refreshable {
 
     private final FournisseurController fournisseurController = FournisseurController.getInstance();
     private TableView<Fournisseur> table;
@@ -39,6 +39,13 @@ public class FournisseurView extends BorderPane {
     public FournisseurView() {
         getStylesheets().add(getClass().getResource("/css/fournisseur.css").toExternalForm());
         initializeUI();
+        refresh();
+    }
+
+    // ...
+
+    @Override
+    public void refresh() {
         refreshTable();
     }
 

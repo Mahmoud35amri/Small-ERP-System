@@ -1,17 +1,14 @@
 package com.minierp.controller;
 
 import com.minierp.model.Facture;
+import com.minierp.service.EntrepriseRegistry;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class FactureController {
     private static FactureController instance;
-    private final List<Facture> factures = new CopyOnWriteArrayList<>();
-    private final AtomicInteger idGenerator = new AtomicInteger(1);
 
     private FactureController() {
     }
@@ -23,15 +20,23 @@ public class FactureController {
         return instance;
     }
 
+    // Helper to get current entreprise's invoices
+    private List<Facture> getFactures() {
+        return EntrepriseRegistry.current().factures;
+    }
+
     public Facture genererDepuisCommande(int commandeId) {
         double montant = CommandeController.getInstance().calculerTTC(commandeId);
-        Facture f = new Facture(idGenerator.getAndIncrement(), commandeId, LocalDate.now(), "NON_PAYEE", montant);
+        List<Facture> factures = getFactures();
+        // Simple ID generation
+        int maxId = factures.stream().mapToInt(Facture::getId).max().orElse(0);
+        Facture f = new Facture(maxId + 1, commandeId, LocalDate.now(), "NON_PAYEE", montant);
         factures.add(f);
         return f;
     }
 
     private Facture findById(int id) {
-        return factures.stream().filter(f -> f.getId() == id).findFirst().orElse(null);
+        return getFactures().stream().filter(f -> f.getId() == id).findFirst().orElse(null);
     }
 
     public void marquerPayee(int id) {
@@ -53,14 +58,16 @@ public class FactureController {
         Facture f = findById(factureId);
         if (f == null)
             throw new IllegalArgumentException("Facture not found");
-        Facture avoir = new Facture(idGenerator.getAndIncrement(), f.getCommandeId(), LocalDate.now(), "AVOIR",
+        List<Facture> factures = getFactures();
+        int maxId = factures.stream().mapToInt(Facture::getId).max().orElse(0);
+        Facture avoir = new Facture(maxId + 1, f.getCommandeId(), LocalDate.now(), "AVOIR",
                 -f.getMontant());
         factures.add(avoir);
         return avoir;
     }
 
     public List<Facture> lister() {
-        return new ArrayList<>(factures);
+        return new ArrayList<>(getFactures());
     }
 
     public File genererPDF(int factureId) {

@@ -10,6 +10,7 @@ public class Utilisateur {
     private String prenom;
     private boolean actif;
     private java.time.LocalDateTime dernierConnexion;
+    private int entrepriseId;
 
     public Utilisateur() {
     }
@@ -86,5 +87,13 @@ public class Utilisateur {
 
     public void setDernierConnexion(java.time.LocalDateTime dernierConnexion) {
         this.dernierConnexion = dernierConnexion;
+    }
+
+    public int getEntrepriseId() {
+        return entrepriseId;
+    }
+
+    public void setEntrepriseId(int entrepriseId) {
+        this.entrepriseId = entrepriseId;
     }
 }

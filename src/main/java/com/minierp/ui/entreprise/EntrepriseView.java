@@ -14,13 +14,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
-public class EntrepriseView extends BorderPane {
+public class EntrepriseView extends BorderPane implements com.minierp.ui.Refreshable {
     private TableView<Entreprise> table;
     private EntrepriseController controller;
 
@@ -81,15 +80,26 @@ public class EntrepriseView extends BorderPane {
             refresh();
             return;
         }
-        var all = controller.getAll();
-        var filtered = all.stream()
-                .filter(e -> e.getNom().toLowerCase().contains(query.toLowerCase()))
-                .toList();
-        table.setItems(FXCollections.observableArrayList(filtered));
+        try {
+            Entreprise current = com.minierp.service.EntrepriseRegistry.current();
+            if (current.getNom().toLowerCase().contains(query.toLowerCase())) {
+                table.setItems(FXCollections.observableArrayList(current));
+            } else {
+                table.setItems(FXCollections.observableArrayList());
+            }
+        } catch (Exception e) {
+            table.setItems(FXCollections.observableArrayList());
+        }
     }
 
-    private void refresh() {
-        table.setItems(FXCollections.observableArrayList(controller.getAll()));
+    @Override
+    public void refresh() {
+        try {
+            Entreprise current = com.minierp.service.EntrepriseRegistry.current();
+            table.setItems(FXCollections.observableArrayList(current));
+        } catch (Exception e) {
+            table.setItems(FXCollections.observableArrayList());
+        }
         table.refresh();
     }
 
