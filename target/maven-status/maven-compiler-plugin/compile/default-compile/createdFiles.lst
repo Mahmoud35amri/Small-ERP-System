@@ -1,0 +1,17 @@
+com\minierp\PrimaryController.class
+com\minierp\model\Entreprise.class
+com\minierp\util\TestDataLoader.class
+com\minierp\service\SessionService.class
+com\minierp\model\Utilisateur.class
+com\minierp\SecondaryController.class
+com\minierp\ui\login\LoginView.class
+com\minierp\controller\EntrepriseController.class
+com\minierp\ui\ViewManager.class
+module-info.class
+com\minierp\App.class
+com\minierp\Main.class
+com\minierp\ui\components\SearchBar.class
+com\minierp\ui\components\ConfirmDialog.class
+com\minierp\controller\UtilisateurController.class
+com\minierp\ui\components\Sidebar.class
+com\minierp\ui\entreprise\EntrepriseView.class

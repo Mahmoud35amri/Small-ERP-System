@@ -1,0 +1,69 @@
+.split-pane {
+    -fx-padding: 10;
+    -fx-background-color: transparent;
+}
+
+.tree-view {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 0);
+    -fx-background-radius: 5;
+}
+
+.tree-cell {
+    -fx-padding: 5 10 5 10;
+    -fx-background-color: transparent;
+}
+
+.tree-cell:filled:selected {
+    -fx-background-color: #e6f3ff;
+    -fx-text-fill: #2c3e50;
+}
+
+.tree-cell:filled:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 0);
+    -fx-background-radius: 5;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.action-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.delete-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.delete-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+.toolbar-container {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 3, 0, 0, 1);
+}

@@ -1,0 +1,95 @@
+.root {
+    -fx-background-color: #f4f6f8;
+}
+
+.toolbar-container {
+    -fx-padding: 15;
+    -fx-spacing: 15;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 5, 0, 0, 1);
+}
+
+.search-field {
+    -fx-pref-width: 300;
+    -fx-background-radius: 20;
+    -fx-padding: 8 15;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 20;
+    -fx-background-color: white;
+}
+
+.search-field:focused {
+    -fx-border-color: #3498db;
+}
+
+.action-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+    -fx-font-weight: bold;
+}
+
+.action-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.secondary-button {
+    -fx-background-color: white;
+    -fx-text-fill: #34495e;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-padding: 7 14;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #95a5a6;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 5, 0, 0, 0);
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 12;
+}
+
+.badge-promo {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-padding: 2 6;
+    -fx-background-radius: 10;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.badge-bestseller {
+    -fx-background-color: #f1c40f;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 2 6;
+    -fx-background-radius: 10;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.stock-low {
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+}
+
+.stock-ok {
+    -fx-text-fill: #27ae60;
+}
