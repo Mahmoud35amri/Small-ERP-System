@@ -34,6 +34,7 @@ public class ProduitController {
         }
         p.setId(idGenerator.getAndIncrement());
         produits.add(p);
+        StockController.getInstance().initialiserStock(p.getId(), p.getQuantiteStock());
         return p;
     }
 

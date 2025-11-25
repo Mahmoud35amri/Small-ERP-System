@@ -1,0 +1,86 @@
+.root {
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.action-button {
+    -fx-background-color: #009688;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: #00796B;
+}
+
+.secondary-button {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #333;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #d5d5d5;
+}
+
+.table-view {
+    -fx-base: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-background-color: #ffffff;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+    -fx-padding: 5;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f5f5f5;
+    -fx-background-insets: 0 0 1 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 35;
+    -fx-border-color: transparent transparent #e0e0e0 transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #616161;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #e0f2f1;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell:filled:selected .text {
+    -fx-fill: #00695c;
+}
+
+.header-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-padding: 10;
+}
+
+.toolbar-container {
+    -fx-padding: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #e0e0e0 transparent;
+}
+
+.status-payee {
+    -fx-text-fill: #4CAF50;
+    -fx-font-weight: bold;
+}
+
+.status-non-payee {
+    -fx-text-fill: #F44336;
+    -fx-font-weight: bold;
+}

@@ -68,7 +68,15 @@ public class ClientController {
     }
 
     public double calculerChiffreAffaires(int clientId) {
-        // Placeholder: In a real app, this would query invoices/payments
-        return 0.0;
+        return FactureController.getInstance().lister().stream()
+                .filter(f -> "PAYEE".equals(f.getStatus()))
+                .filter(f -> {
+                    com.minierp.model.Commande c = CommandeController.getInstance().lister().stream()
+                            .filter(cmd -> cmd.getId() == f.getCommandeId())
+                            .findFirst().orElse(null);
+                    return c != null && c.getClientId() == clientId;
+                })
+                .mapToDouble(com.minierp.model.Facture::getMontant)
+                .sum();
     }
 }

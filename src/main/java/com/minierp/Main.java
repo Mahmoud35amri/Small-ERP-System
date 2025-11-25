@@ -21,6 +21,11 @@ public class Main extends Application {
         viewManager.setView("Utilisateur", new com.minierp.ui.utilisateur.UtilisateurView());
         viewManager.setView("Categorie", new com.minierp.ui.categorie.CategorieView());
         viewManager.setView("Produit", new com.minierp.ui.produit.ProduitView());
+        viewManager.setView("Stock", new com.minierp.ui.stock.StockView());
+        viewManager.setView("client", new com.minierp.ui.client.ClientView());
+        viewManager.setView("fournisseur", new com.minierp.ui.fournisseur.FournisseurView());
+        viewManager.setView("Commande", new com.minierp.ui.commande.CommandeView());
+        viewManager.setView("Facture", new com.minierp.ui.facture.FactureView());
 
         // Load Login View initially
         viewManager.showLogin();

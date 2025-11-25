@@ -76,6 +76,14 @@ public class StockController {
         mouvements.add(mvt);
     }
 
+    public void initialiserStock(int produitId, int qte) {
+        Stock stock = getStockByProduit(produitId);
+        stock.setQuantiteActuelle(qte);
+        MouvementStock mvt = new MouvementStock(mouvementIdGenerator.getAndIncrement(), produitId, "INITIAL", qte,
+                LocalDateTime.now());
+        mouvements.add(mvt);
+    }
+
     public List<MouvementStock> historiser(int produitId) {
         return mouvements.stream()
                 .filter(m -> m.getProduitId() == produitId)

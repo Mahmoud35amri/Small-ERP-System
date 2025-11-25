@@ -102,21 +102,24 @@ public class ProduitView extends BorderPane {
                 showWarning("Veuillez sélectionner un produit.");
         });
 
-        Button btnRefresh = new Button("Rafraîchir");
-        btnRefresh.getStyleClass().add("secondary-button");
-        btnRefresh.setOnAction(e -> refreshTable());
-
         Button btnDelete = new Button("Supprimer");
         btnDelete.getStyleClass().add("secondary-button");
         btnDelete.setOnAction(e -> deleteSelectedProduit());
 
-        HBox toolbar = new HBox(15, searchField, categoryFilter, btnAdd, btnStock, btnPromo, btnDelete, btnRefresh);
+        HBox toolbar = new HBox(15, searchField, categoryFilter, btnAdd, btnStock, btnPromo, btnDelete);
         toolbar.getStyleClass().add("toolbar-container");
         toolbar.setAlignment(Pos.CENTER_LEFT);
         return toolbar;
     }
 
     private void setupTable() {
+        // Auto-refresh when scene is shown
+        sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                refreshTable();
+            }
+        });
+
         table.setEditable(true);
 
         TableColumn<Produit, String> colRef = new TableColumn<>("Réf");
@@ -367,7 +370,11 @@ public class ProduitView extends BorderPane {
         result.ifPresent(qty -> {
             try {
                 int delta = Integer.parseInt(qty);
-                produitController.ajusterStock(produit.getId(), delta);
+                if (delta > 0) {
+                    com.minierp.controller.StockController.getInstance().ajouter(produit.getId(), delta);
+                } else if (delta < 0) {
+                    com.minierp.controller.StockController.getInstance().retirer(produit.getId(), -delta);
+                }
                 refreshTable();
                 showSuccess("Stock ajusté");
             } catch (NumberFormatException e) {
