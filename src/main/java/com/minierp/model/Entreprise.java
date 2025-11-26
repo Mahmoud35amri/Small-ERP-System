@@ -1,6 +1,6 @@
 package com.minierp.model;
 
-public class Entreprise {
+public class Entreprise implements Identifiable {
     private int id;
     private String nom;
     private String adresse;

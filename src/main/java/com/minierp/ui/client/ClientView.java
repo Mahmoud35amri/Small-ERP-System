@@ -19,8 +19,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
+
+import com.minierp.util.DialogHelper;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 
@@ -131,7 +131,7 @@ public class ClientView extends BorderPane implements com.minierp.ui.Refreshable
             if (selected != null)
                 showEditDialog(selected);
             else
-                showWarning("Veuillez sélectionner un client.");
+                DialogHelper.showWarning("Veuillez sélectionner un client.");
         });
 
         HBox toolbar = new HBox(10, searchField, btnNew, btnEdit);
@@ -292,14 +292,14 @@ public class ClientView extends BorderPane implements com.minierp.ui.Refreshable
             try {
                 if (client == null) {
                     clientController.creer(c);
-                    showSuccess("Client créé");
+                    DialogHelper.showSuccess("Client créé");
                 } else {
                     clientController.modifier(c);
-                    showSuccess("Client modifié");
+                    DialogHelper.showSuccess("Client modifié");
                 }
                 refreshTable();
             } catch (Exception ex) {
-                showError(ex.getMessage());
+                DialogHelper.showError(ex.getMessage());
             }
         });
     }
@@ -334,15 +334,4 @@ public class ClientView extends BorderPane implements com.minierp.ui.Refreshable
                         .toList()));
     }
 
-    private void showSuccess(String message) {
-        Notifications.create().title("Succès").text(message).hideAfter(Duration.seconds(3)).showInformation();
-    }
-
-    private void showWarning(String message) {
-        Notifications.create().title("Attention").text(message).hideAfter(Duration.seconds(3)).showWarning();
-    }
-
-    private void showError(String message) {
-        Notifications.create().title("Erreur").text(message).hideAfter(Duration.seconds(5)).showError();
-    }
 }

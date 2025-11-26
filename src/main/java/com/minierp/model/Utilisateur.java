@@ -1,6 +1,6 @@
 package com.minierp.model;
 
-public class Utilisateur {
+public class Utilisateur implements Identifiable {
     private int id;
     private String nom;
     private String email;

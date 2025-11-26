@@ -30,9 +30,8 @@ public class ClientController {
             throw new IllegalArgumentException("Nom is required");
         }
         List<Client> clients = getClients();
-        // Simple ID generation
-        int maxId = clients.stream().mapToInt(Client::getId).max().orElse(0);
-        c.setId(maxId + 1);
+        // Use IdGenerator
+        c.setId(com.minierp.util.IdGenerator.generate(clients));
         c.setDateCreation(LocalDate.now());
         clients.add(c);
         return c;
@@ -47,6 +46,17 @@ public class ClientController {
             if (clients.get(i).getId() == c.getId()) {
                 clients.set(i, c);
                 return c;
+            }
+        }
+        throw new IllegalArgumentException("Client not found");
+    }
+
+    public void supprimer(int id) {
+        List<Client> clients = getClients();
+        for (Client c : clients) {
+            if (c.getId() == id) {
+                clients.remove(c);
+                return;
             }
         }
         throw new IllegalArgumentException("Client not found");

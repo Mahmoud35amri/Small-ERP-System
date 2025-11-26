@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Commande {
+public class Commande implements Identifiable {
     private int id;
     private int clientId;
     private LocalDate date;

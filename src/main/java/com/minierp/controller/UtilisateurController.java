@@ -38,12 +38,11 @@ public class UtilisateurController {
         throw new Exception("Invalid credentials");
     }
 
-    public void create(Utilisateur u) {
+    public void creer(Utilisateur u) {
         List<Utilisateur> users = getUsers();
         if (u.getId() == 0) {
-            // Simple ID generation
-            int maxId = users.stream().mapToInt(Utilisateur::getId).max().orElse(0);
-            u.setId(maxId + 1);
+            // Use IdGenerator
+            u.setId(com.minierp.util.IdGenerator.generate(users));
         }
         // Ensure entrepriseId is set to current if not already
         if (u.getEntrepriseId() == 0) {
@@ -52,11 +51,11 @@ public class UtilisateurController {
         users.add(u);
     }
 
-    public List<Utilisateur> getAll() {
+    public List<Utilisateur> lister() {
         return new ArrayList<>(getUsers());
     }
 
-    public void update(Utilisateur u) {
+    public void modifier(Utilisateur u) {
         List<Utilisateur> users = getUsers();
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getId() == u.getId()) {
@@ -66,17 +65,17 @@ public class UtilisateurController {
         }
     }
 
-    public void delete(Utilisateur u) {
+    public void supprimer(Utilisateur u) {
         getUsers().removeIf(user -> user.getId() == u.getId());
     }
 
     public void resetPassword(Utilisateur u) {
         u.setPassword("123456"); // Default reset password
-        update(u);
+        modifier(u);
     }
 
     public void toggleLock(Utilisateur u) {
         u.setActif(!u.isActif());
-        update(u);
+        modifier(u);
     }
 }

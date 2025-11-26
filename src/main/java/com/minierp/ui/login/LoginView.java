@@ -27,7 +27,7 @@ public class LoginView extends VBox {
 
         emailField = new TextField();
         emailField.setPromptText("Email");
-        emailField.setText("admin@minierp.com"); // Pre-fill for convenience
+        emailField.setText("admin@techsolutions.com"); // Pre-fill for convenience
 
         passwordField = new PasswordField();
         passwordField.setPromptText("Password");

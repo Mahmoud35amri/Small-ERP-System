@@ -2,8 +2,10 @@ package com.minierp.ui.produit;
 
 import com.minierp.controller.CategorieController;
 import com.minierp.controller.ProduitController;
+import com.minierp.controller.FournisseurController;
 import com.minierp.model.Categorie;
 import com.minierp.model.Produit;
+import com.minierp.model.Fournisseur;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -18,7 +20,7 @@ import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javafx.application.Platform;
-import org.controlsfx.control.Notifications;
+import com.minierp.util.DialogHelper;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 
@@ -29,6 +31,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
 
     private final ProduitController produitController = ProduitController.getInstance();
     private final CategorieController categorieController = CategorieController.getInstance();
+    private final FournisseurController fournisseurController = FournisseurController.getInstance();
 
     private TableView<Produit> table;
     private FilteredList<Produit> filteredData;
@@ -96,7 +99,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
             if (selected != null)
                 showStockDialog(selected);
             else
-                showWarning("Veuillez sélectionner un produit.");
+                DialogHelper.showWarning("Veuillez sélectionner un produit.");
         });
 
         Button btnPromo = new Button("Promotion");
@@ -106,7 +109,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
             if (selected != null)
                 showPromoDialog(selected);
             else
-                showWarning("Veuillez sélectionner un produit.");
+                DialogHelper.showWarning("Veuillez sélectionner un produit.");
         });
 
         Button btnDelete = new Button("Supprimer");
@@ -152,10 +155,10 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
             if (e.getNewValue() >= 0) {
                 p.setQuantiteStock(e.getNewValue());
                 produitController.modifier(p);
-                showSuccess("Stock mis à jour");
+                DialogHelper.showSuccess("Stock mis à jour");
             } else {
                 refreshTable(); // Revert
-                showError("Le stock ne peut pas être négatif");
+                DialogHelper.showError("Le stock ne peut pas être négatif");
             }
         });
         colStock.setPrefWidth(100);
@@ -168,10 +171,10 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
             if (e.getNewValue() >= 0) {
                 p.setPrixVente(e.getNewValue());
                 produitController.modifier(p);
-                showSuccess("Prix mis à jour");
+                DialogHelper.showSuccess("Prix mis à jour");
             } else {
                 refreshTable(); // Revert
-                showError("Le prix ne peut pas être négatif");
+                DialogHelper.showError("Le prix ne peut pas être négatif");
             }
         });
         colPrix.setPrefWidth(100);
@@ -286,6 +289,17 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
             });
             catCombo.setButtonCell(catCombo.getCellFactory().call(null));
 
+            ComboBox<Fournisseur> fournCombo = new ComboBox<>();
+            fournCombo.getItems().addAll(fournisseurController.lister());
+            fournCombo.setCellFactory(lv -> new ListCell<>() {
+                @Override
+                protected void updateItem(Fournisseur item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? "" : item.getNomSociete());
+                }
+            });
+            fournCombo.setButtonCell(fournCombo.getCellFactory().call(null));
+
             if (produit != null) {
                 refField.setText(produit.getRef());
                 nomField.setText(produit.getNom());
@@ -297,6 +311,11 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
                         .filter(c -> c.getId() == produit.getCategorieId())
                         .findFirst()
                         .ifPresent(catCombo::setValue);
+
+                fournisseurController.lister().stream()
+                        .filter(f -> f.getId() == produit.getFournisseurId())
+                        .findFirst()
+                        .ifPresent(fournCombo::setValue);
             }
 
             grid.add(new Label("Référence:"), 0, 0);
@@ -305,11 +324,13 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
             grid.add(nomField, 1, 1);
             grid.add(new Label("Catégorie:"), 0, 2);
             grid.add(catCombo, 1, 2);
-            grid.add(new Label("Stock:"), 0, 3);
-            grid.add(stockField, 1, 3);
-            grid.add(new Label("Prix Vente:"), 0, 4);
-            grid.add(prixField, 1, 4);
-            grid.add(bestSellerCheck, 1, 5);
+            grid.add(new Label("Fournisseur:"), 0, 3);
+            grid.add(fournCombo, 1, 3);
+            grid.add(new Label("Stock:"), 0, 4);
+            grid.add(stockField, 1, 4);
+            grid.add(new Label("Prix Vente:"), 0, 5);
+            grid.add(prixField, 1, 5);
+            grid.add(bestSellerCheck, 1, 6);
 
             Platform.runLater(() -> {
                 ValidationSupport validationSupport = new ValidationSupport();
@@ -334,6 +355,11 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
                     if (catCombo.getValue() != null) {
                         p.setCategorieId(catCombo.getValue().getId());
                     }
+                    if (fournCombo.getValue() != null) {
+                        p.setFournisseurId(fournCombo.getValue().getId());
+                    } else {
+                        p.setFournisseurId(0); // Optional
+                    }
                     try {
                         p.setQuantiteStock(Integer.parseInt(stockField.getText()));
                         p.setPrixVente(Double.parseDouble(prixField.getText()));
@@ -351,19 +377,19 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
                 try {
                     if (produit == null) {
                         produitController.creer(p);
-                        showSuccess("Produit créé");
+                        DialogHelper.showSuccess("Produit créé");
                     } else {
                         produitController.modifier(p);
-                        showSuccess("Produit modifié");
+                        DialogHelper.showSuccess("Produit modifié");
                     }
                     refreshTable();
                 } catch (Exception ex) {
-                    showError(ex.getMessage());
+                    DialogHelper.showError(ex.getMessage());
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Erreur lors de l'ouverture du dialogue: " + e.getMessage());
+            DialogHelper.showError("Erreur lors de l'ouverture du dialogue: " + e.getMessage());
         }
     }
 
@@ -383,11 +409,11 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
                     com.minierp.controller.StockController.getInstance().retirer(produit.getId(), -delta);
                 }
                 refreshTable();
-                showSuccess("Stock ajusté");
+                DialogHelper.showSuccess("Stock ajusté");
             } catch (NumberFormatException e) {
-                showError("Nombre invalide");
+                DialogHelper.showError("Nombre invalide");
             } catch (Exception e) {
-                showError(e.getMessage());
+                DialogHelper.showError(e.getMessage());
             }
         });
     }
@@ -435,16 +461,16 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
             try {
                 if (val == -1.0) {
                     produitController.annulerPromotion(produit.getId());
-                    showSuccess("Promotion annulée");
+                    DialogHelper.showSuccess("Promotion annulée");
                 } else if (val != null) {
                     produitController.appliquerPromotion(produit.getId(), val);
-                    showSuccess("Promotion appliquée");
+                    DialogHelper.showSuccess("Promotion appliquée");
                 } else {
-                    showError("Pourcentage invalide");
+                    DialogHelper.showError("Pourcentage invalide");
                 }
                 refreshTable();
             } catch (Exception e) {
-                showError(e.getMessage());
+                DialogHelper.showError(e.getMessage());
             }
         });
     }
@@ -452,7 +478,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
     private void deleteSelectedProduit() {
         Produit selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showWarning("Veuillez sélectionner un produit à supprimer.");
+            DialogHelper.showWarning("Veuillez sélectionner un produit à supprimer.");
             return;
         }
 
@@ -465,23 +491,12 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 produitController.supprimer(selected.getId());
-                showSuccess("Produit supprimé avec succès");
+                DialogHelper.showSuccess("Produit supprimé avec succès");
                 refreshTable();
             } catch (Exception ex) {
-                showError("Erreur lors de la suppression: " + ex.getMessage());
+                DialogHelper.showError("Erreur lors de la suppression: " + ex.getMessage());
             }
         }
     }
 
-    private void showSuccess(String message) {
-        Notifications.create().title("Succès").text(message).showInformation();
-    }
-
-    private void showError(String message) {
-        Notifications.create().title("Erreur").text(message).showError();
-    }
-
-    private void showWarning(String message) {
-        Notifications.create().title("Attention").text(message).showWarning();
-    }
 }

@@ -14,15 +14,14 @@ public class TestDataLoader {
         Entreprise e2 = new Entreprise(0, "Global Trade", "456 Market Ave", "555-0102", "info@globaltrade.com",
                 100000.0);
 
-        EntrepriseController.getInstance().create(e1);
-        EntrepriseController.getInstance().create(e2);
+        EntrepriseController.getInstance().creer(e1);
+        EntrepriseController.getInstance().creer(e2);
 
         // 2. Add data for Tech Solutions
         EntrepriseRegistry.getInstance().switchTo(e1.getId());
-
         Utilisateur user1 = new Utilisateur(0, "John", "Doe", "john@techsol.com", "123456", "EMPLOYE", true);
         user1.setEntrepriseId(e1.getId());
-        UtilisateurController.getInstance().create(user1);
+        UtilisateurController.getInstance().creer(user1);
 
         // Add more data for e1 if needed (Clients, Products, etc.)
 
@@ -31,7 +30,7 @@ public class TestDataLoader {
 
         Utilisateur user2 = new Utilisateur(0, "Jane", "Smith", "jane@globaltrade.com", "123456", "GERANT", true);
         user2.setEntrepriseId(e2.getId());
-        UtilisateurController.getInstance().create(user2);
+        UtilisateurController.getInstance().creer(user2);
 
         System.out.println("Test data loaded for multi-tenancy.");
     }

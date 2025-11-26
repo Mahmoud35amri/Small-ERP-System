@@ -12,7 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.Callback;
-import org.controlsfx.control.Notifications;
+import com.minierp.util.DialogHelper;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 
@@ -54,7 +54,7 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
             if (selected != null && selected.getValue() != null) {
                 showEditDialog(selected.getValue());
             } else {
-                showWarning("Veuillez sélectionner une catégorie à modifier.");
+                DialogHelper.showWarning("Veuillez sélectionner une catégorie à modifier.");
             }
         });
 
@@ -173,13 +173,13 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
     private void deleteSelectedCategorie() {
         TreeItem<Categorie> selected = treeView.getSelectionModel().getSelectedItem();
         if (selected == null || selected.getValue() == null) {
-            showWarning("Aucune catégorie sélectionnée.");
+            DialogHelper.showWarning("Aucune catégorie sélectionnée.");
             return;
         }
 
         // Check if has children
         if (!selected.getChildren().isEmpty()) {
-            showError("Impossible de supprimer une catégorie contenant des sous-catégories.");
+            DialogHelper.showError("Impossible de supprimer une catégorie contenant des sous-catégories.");
             return;
         }
 
@@ -189,7 +189,7 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
                 .collect(Collectors.toList());
 
         if (!products.isEmpty()) {
-            showError("Impossible de supprimer une catégorie contenant des produits.");
+            DialogHelper.showError("Impossible de supprimer une catégorie contenant des produits.");
             return;
         }
 
@@ -202,10 +202,10 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 categorieController.supprimer(selected.getValue().getId());
-                showSuccess("Catégorie supprimée avec succès");
+                DialogHelper.showSuccess("Catégorie supprimée avec succès");
                 refreshTree();
             } catch (Exception ex) {
-                showError("Erreur lors de la suppression: " + ex.getMessage());
+                DialogHelper.showError("Erreur lors de la suppression: " + ex.getMessage());
             }
         }
     }
@@ -283,37 +283,16 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
             try {
                 if (categorie == null) {
                     categorieController.creer(c);
-                    showSuccess("Catégorie créée avec succès");
+                    DialogHelper.showSuccess("Catégorie créée avec succès");
                 } else {
                     categorieController.modifier(c);
-                    showSuccess("Catégorie modifiée avec succès");
+                    DialogHelper.showSuccess("Catégorie modifiée avec succès");
                 }
                 refreshTree();
             } catch (Exception ex) {
-                showError("Erreur: " + ex.getMessage());
+                DialogHelper.showError("Erreur: " + ex.getMessage());
             }
         });
-    }
-
-    private void showSuccess(String message) {
-        Notifications.create()
-                .title("Succès")
-                .text(message)
-                .showInformation();
-    }
-
-    private void showError(String message) {
-        Notifications.create()
-                .title("Erreur")
-                .text(message)
-                .showError();
-    }
-
-    private void showWarning(String message) {
-        Notifications.create()
-                .title("Attention")
-                .text(message)
-                .showWarning();
     }
 
     // Inner class for Drag & Drop
@@ -349,9 +328,9 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
                             categorieController.deplacerCategorie(draggedId, newParentId);
                             refreshTree();
                             success = true;
-                            showSuccess("Catégorie déplacée");
+                            DialogHelper.showSuccess("Catégorie déplacée");
                         } catch (Exception ex) {
-                            showError("Erreur lors du déplacement: " + ex.getMessage());
+                            DialogHelper.showError("Erreur lors du déplacement: " + ex.getMessage());
                         }
                     }
                 }

@@ -35,8 +35,8 @@ public class StockController {
         stock.setQuantiteActuelle(stock.getQuantiteActuelle() + qte);
 
         List<MouvementStock> mouvements = getMouvements();
-        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
-        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "AJOUT", qte,
+        int newId = com.minierp.util.IdGenerator.generate(mouvements);
+        MouvementStock mvt = new MouvementStock(newId, produitId, "AJOUT", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
 
@@ -52,8 +52,8 @@ public class StockController {
         stock.setQuantiteActuelle(stock.getQuantiteActuelle() - qte);
 
         List<MouvementStock> mouvements = getMouvements();
-        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
-        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "RETRAIT", qte,
+        int newId = com.minierp.util.IdGenerator.generate(mouvements);
+        MouvementStock mvt = new MouvementStock(newId, produitId, "RETRAIT", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
 
@@ -69,8 +69,8 @@ public class StockController {
         stock.setQuantiteReservee(stock.getQuantiteReservee() + qte);
 
         List<MouvementStock> mouvements = getMouvements();
-        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
-        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "RESERVATION", qte,
+        int newId = com.minierp.util.IdGenerator.generate(mouvements);
+        MouvementStock mvt = new MouvementStock(newId, produitId, "RESERVATION", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
     }
@@ -83,8 +83,8 @@ public class StockController {
         stock.setQuantiteReservee(stock.getQuantiteReservee() - qte);
 
         List<MouvementStock> mouvements = getMouvements();
-        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
-        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "LIBERATION", qte,
+        int newId = com.minierp.util.IdGenerator.generate(mouvements);
+        MouvementStock mvt = new MouvementStock(newId, produitId, "LIBERATION", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
     }
@@ -94,8 +94,8 @@ public class StockController {
         stock.setQuantiteActuelle(qte);
 
         List<MouvementStock> mouvements = getMouvements();
-        int maxId = mouvements.stream().mapToInt(MouvementStock::getId).max().orElse(0);
-        MouvementStock mvt = new MouvementStock(maxId + 1, produitId, "INITIAL", qte,
+        int newId = com.minierp.util.IdGenerator.generate(mouvements);
+        MouvementStock mvt = new MouvementStock(newId, produitId, "INITIAL", qte,
                 LocalDateTime.now());
         mouvements.add(mvt);
     }
@@ -112,8 +112,8 @@ public class StockController {
                 .filter(s -> s.getProduitId() == produitId)
                 .findFirst()
                 .orElseGet(() -> {
-                    int maxId = stocks.stream().mapToInt(Stock::getId).max().orElse(0);
-                    Stock s = new Stock(maxId + 1, produitId, 0, 0);
+                    int newId = com.minierp.util.IdGenerator.generate(stocks);
+                    Stock s = new Stock(newId, produitId, 0, 0);
                     stocks.add(s);
                     return s;
                 });

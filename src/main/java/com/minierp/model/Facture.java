@@ -3,7 +3,7 @@ package com.minierp.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Facture {
+public class Facture implements Identifiable {
     private int id;
     private int commandeId;
     private LocalDate date;

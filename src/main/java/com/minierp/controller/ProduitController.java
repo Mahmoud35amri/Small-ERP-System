@@ -35,9 +35,8 @@ public class ProduitController {
             throw new IllegalArgumentException("PrixVente is required");
         }
         List<Produit> produits = getProduits();
-        // Simple ID generation
-        int maxId = produits.stream().mapToInt(Produit::getId).max().orElse(0);
-        p.setId(maxId + 1);
+        // Use IdGenerator
+        p.setId(com.minierp.util.IdGenerator.generate(produits));
         produits.add(p);
         StockController.getInstance().initialiserStock(p.getId(), p.getQuantiteStock());
         return p;

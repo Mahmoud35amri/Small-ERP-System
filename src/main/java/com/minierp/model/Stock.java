@@ -2,7 +2,7 @@ package com.minierp.model;
 
 import java.util.Objects;
 
-public class Stock {
+public class Stock implements Identifiable {
     private int id;
     private int produitId;
     private int quantiteActuelle;

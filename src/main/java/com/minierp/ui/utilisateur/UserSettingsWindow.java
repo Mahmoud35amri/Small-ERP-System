@@ -12,7 +12,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.controlsfx.control.Notifications;
 
 public class UserSettingsWindow {
 
@@ -44,25 +43,25 @@ public class UserSettingsWindow {
             Utilisateur user = SessionService.getInstance().getConnectedUser();
 
             if (!user.getPassword().equals(current)) {
-                Notifications.create().text("Current password is incorrect").showError();
+                com.minierp.util.DialogHelper.showError("Current password is incorrect");
                 return;
             }
 
             if (!newVal.equals(confirm)) {
-                Notifications.create().text("New passwords do not match").showError();
+                com.minierp.util.DialogHelper.showError("New passwords do not match");
                 return;
             }
 
             if (newVal.isEmpty()) {
-                Notifications.create().text("Password cannot be empty").showError();
+                com.minierp.util.DialogHelper.showError("Password cannot be empty");
                 return;
             }
 
             // Update password
             user.setPassword(newVal); // In real app, hash here
-            UtilisateurController.getInstance().update(user);
+            UtilisateurController.getInstance().modifier(user);
 
-            Notifications.create().text("Mot de passe mis à jour.").showInformation();
+            com.minierp.util.DialogHelper.showSuccess("Mot de passe mis à jour.");
             dialog.close();
         });
 

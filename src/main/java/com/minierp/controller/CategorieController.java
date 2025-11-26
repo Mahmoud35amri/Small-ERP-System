@@ -29,9 +29,8 @@ public class CategorieController {
             throw new IllegalArgumentException("Nom is required");
         }
         List<Categorie> categories = getCategories();
-        // Simple ID generation
-        int maxId = categories.stream().mapToInt(Categorie::getId).max().orElse(0);
-        c.setId(maxId + 1);
+        // Use IdGenerator
+        c.setId(com.minierp.util.IdGenerator.generate(categories));
         categories.add(c);
         return c;
     }

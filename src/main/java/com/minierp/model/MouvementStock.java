@@ -3,7 +3,7 @@ package com.minierp.model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class MouvementStock {
+public class MouvementStock implements Identifiable {
     private int id;
     private int produitId;
     private String type; // AJOUT, RETRAIT, RESERVATION, LIBERATION

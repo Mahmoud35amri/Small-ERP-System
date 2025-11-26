@@ -8,7 +8,7 @@ import java.util.List;
 
 public class EntrepriseController {
     private static EntrepriseController instance;
-    private int nextId = 1;
+    // nextId removed
 
     private EntrepriseController() {
     }
@@ -20,16 +20,14 @@ public class EntrepriseController {
         return instance;
     }
 
-    public List<Entreprise> getAll() {
+    public List<Entreprise> lister() {
         return new ArrayList<>(EntrepriseRegistry.getInstance().getAll().values());
     }
 
-    public void create(Entreprise e) {
+    public void creer(Entreprise e) {
         // Generate ID if not set
         if (e.getId() == 0) {
-            int maxId = EntrepriseRegistry.getInstance().getAll().keySet().stream().mapToInt(Integer::intValue).max()
-                    .orElse(0);
-            e.setId(maxId + 1);
+            e.setId(com.minierp.util.IdGenerator.generate(EntrepriseRegistry.getInstance().getAll().values()));
         }
 
         // Register in Registry
@@ -55,14 +53,14 @@ public class EntrepriseController {
         e.utilisateurs.add(admin);
     }
 
-    public void update(Entreprise e) {
+    public void modifier(Entreprise e) {
         // Registry holds references, so updating the object updates it in map if
         // reference is same.
         // If not, put it back.
         EntrepriseRegistry.getInstance().register(e);
     }
 
-    public void delete(Entreprise e) {
+    public void supprimer(Entreprise e) {
         // Registry doesn't support delete yet in the interface I defined, but map does.
         // For now, let's assume we don't delete entreprises often or add remove method
         // to registry.

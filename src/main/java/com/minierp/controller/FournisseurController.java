@@ -28,9 +28,8 @@ public class FournisseurController {
             throw new IllegalArgumentException("Nom Societe is required");
         }
         List<Fournisseur> fournisseurs = getFournisseurs();
-        // Simple ID generation
-        int maxId = fournisseurs.stream().mapToInt(Fournisseur::getId).max().orElse(0);
-        f.setId(maxId + 1);
+        // Use IdGenerator
+        f.setId(com.minierp.util.IdGenerator.generate(fournisseurs));
         fournisseurs.add(f);
         return f;
     }
@@ -44,6 +43,17 @@ public class FournisseurController {
             if (fournisseurs.get(i).getId() == f.getId()) {
                 fournisseurs.set(i, f);
                 return f;
+            }
+        }
+        throw new IllegalArgumentException("Fournisseur not found");
+    }
+
+    public void supprimer(int id) {
+        List<Fournisseur> fournisseurs = getFournisseurs();
+        for (Fournisseur f : fournisseurs) {
+            if (f.getId() == id) {
+                fournisseurs.remove(f);
+                return;
             }
         }
         throw new IllegalArgumentException("Fournisseur not found");

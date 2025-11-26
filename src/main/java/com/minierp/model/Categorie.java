@@ -2,7 +2,7 @@ package com.minierp.model;
 
 import java.util.Objects;
 
-public class Categorie {
+public class Categorie implements Identifiable {
     private int id;
     private String nom;
     private Integer parentId;

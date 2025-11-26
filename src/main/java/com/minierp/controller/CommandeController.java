@@ -27,9 +27,8 @@ public class CommandeController {
 
     public Commande creer(Commande c) {
         List<Commande> commandes = getCommandes();
-        // Simple ID generation
-        int maxId = commandes.stream().mapToInt(Commande::getId).max().orElse(0);
-        c.setId(maxId + 1);
+        // Use IdGenerator
+        c.setId(com.minierp.util.IdGenerator.generate(commandes));
         c.setDate(LocalDate.now());
         c.setStatus("BROUILLON");
         commandes.add(c);

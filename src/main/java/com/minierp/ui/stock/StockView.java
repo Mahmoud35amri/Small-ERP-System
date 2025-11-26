@@ -16,8 +16,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
+
+import com.minierp.util.DialogHelper;
 
 import java.util.Optional;
 
@@ -146,7 +146,7 @@ public class StockView extends BorderPane implements com.minierp.ui.Refreshable 
     private void handleStockAction(String action) {
         Stock selected = stockTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showWarning("Veuillez sélectionner un produit.");
+            DialogHelper.showWarning("Veuillez sélectionner un produit.");
             return;
         }
 
@@ -178,27 +178,27 @@ public class StockView extends BorderPane implements com.minierp.ui.Refreshable 
                 switch (action) {
                     case "AJOUT":
                         stockController.ajouter(selected.getProduitId(), qty);
-                        showSuccess("Stock ajouté");
+                        DialogHelper.showSuccess("Stock ajouté");
                         break;
                     case "RETRAIT":
                         stockController.retirer(selected.getProduitId(), qty);
-                        showSuccess("Stock retiré");
+                        DialogHelper.showSuccess("Stock retiré");
                         break;
                     case "RESERVATION":
                         stockController.reserver(selected.getProduitId(), qty);
-                        showSuccess("Stock réservé");
+                        DialogHelper.showSuccess("Stock réservé");
                         break;
                     case "LIBERATION":
                         stockController.libererReservation(selected.getProduitId(), qty);
-                        showSuccess("Réservation libérée");
+                        DialogHelper.showSuccess("Réservation libérée");
                         break;
                 }
                 refresh();
                 refreshMouvements(selected.getProduitId());
             } catch (NumberFormatException e) {
-                showError("Quantité invalide");
+                DialogHelper.showError("Quantité invalide");
             } catch (Exception e) {
-                showError(e.getMessage());
+                DialogHelper.showError(e.getMessage());
             }
         });
     }
@@ -214,27 +214,4 @@ public class StockView extends BorderPane implements com.minierp.ui.Refreshable 
         mouvementTable.setItems(FXCollections.observableArrayList(stockController.historiser(produitId)));
     }
 
-    private void showSuccess(String message) {
-        Notifications.create()
-                .title("Succès")
-                .text(message)
-                .hideAfter(Duration.seconds(3))
-                .showInformation();
-    }
-
-    private void showWarning(String message) {
-        Notifications.create()
-                .title("Attention")
-                .text(message)
-                .hideAfter(Duration.seconds(3))
-                .showWarning();
-    }
-
-    private void showError(String message) {
-        Notifications.create()
-                .title("Erreur")
-                .text(message)
-                .hideAfter(Duration.seconds(5))
-                .showError();
-    }
 }

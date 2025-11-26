@@ -3,7 +3,7 @@ package com.minierp.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Client {
+public class Client implements Identifiable {
     private int id;
     private String code;
     private String nom;

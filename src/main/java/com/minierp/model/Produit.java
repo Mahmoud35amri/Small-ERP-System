@@ -2,7 +2,7 @@ package com.minierp.model;
 
 import java.util.Objects;
 
-public class Produit {
+public class Produit implements Identifiable {
     private int id;
     private String ref;
     private String nom;
@@ -13,6 +13,8 @@ public class Produit {
     private double promotionPourcentage;
     private double prixOriginal;
     private boolean bestSeller;
+
+    private int fournisseurId;
 
     public Produit() {
     }
@@ -61,6 +63,14 @@ public class Produit {
 
     public void setCategorieId(int categorieId) {
         this.categorieId = categorieId;
+    }
+
+    public int getFournisseurId() {
+        return fournisseurId;
+    }
+
+    public void setFournisseurId(int fournisseurId) {
+        this.fournisseurId = fournisseurId;
     }
 
     public int getQuantiteStock() {
@@ -132,6 +142,7 @@ public class Produit {
                 "id=" + id +
                 ", ref='" + ref + '\'' +
                 ", nom='" + nom + '\'' +
+                ", fournisseurId=" + fournisseurId +
                 '}';
     }
 }

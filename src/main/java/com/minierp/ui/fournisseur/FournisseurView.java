@@ -23,8 +23,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
+
+import com.minierp.util.DialogHelper;
 import org.controlsfx.control.Rating;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
@@ -77,7 +77,7 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
             if (selected != null)
                 showEditDialog(selected);
             else
-                showWarning("Veuillez sélectionner un fournisseur.");
+                DialogHelper.showWarning("Veuillez sélectionner un fournisseur.");
         });
 
         HBox toolbar = new HBox(10, btnNew, btnEdit);
@@ -221,14 +221,14 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
             try {
                 if (fournisseur == null) {
                     fournisseurController.creer(f);
-                    showSuccess("Fournisseur créé");
+                    DialogHelper.showSuccess("Fournisseur créé");
                 } else {
                     fournisseurController.modifier(f);
-                    showSuccess("Fournisseur modifié");
+                    DialogHelper.showSuccess("Fournisseur modifié");
                 }
                 refreshTable();
             } catch (Exception ex) {
-                showError(ex.getMessage());
+                DialogHelper.showError(ex.getMessage());
             }
         });
     }
@@ -237,15 +237,4 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
         table.setItems(FXCollections.observableArrayList(fournisseurController.lister()));
     }
 
-    private void showSuccess(String message) {
-        Notifications.create().title("Succès").text(message).hideAfter(Duration.seconds(3)).showInformation();
-    }
-
-    private void showWarning(String message) {
-        Notifications.create().title("Attention").text(message).hideAfter(Duration.seconds(3)).showWarning();
-    }
-
-    private void showError(String message) {
-        Notifications.create().title("Erreur").text(message).hideAfter(Duration.seconds(5)).showError();
-    }
 }

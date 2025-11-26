@@ -22,8 +22,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
+
+import com.minierp.util.DialogHelper;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -266,10 +266,10 @@ public class CommandeView extends BorderPane implements com.minierp.ui.Refreshab
                 // However, CommandeController.creer just adds to list.
                 // We might need to ensure stock reservation isn't done here (it's done on
                 // validation).
-                showSuccess("Commande créée");
+                DialogHelper.showSuccess("Commande créée");
                 refreshTable();
             } catch (Exception ex) {
-                showError(ex.getMessage());
+                DialogHelper.showError(ex.getMessage());
             }
         });
     }
@@ -277,7 +277,7 @@ public class CommandeView extends BorderPane implements com.minierp.ui.Refreshab
     private void handleStatusChange(String newStatus) {
         Commande selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showWarning("Veuillez sélectionner une commande.");
+            DialogHelper.showWarning("Veuillez sélectionner une commande.");
             return;
         }
 
@@ -285,40 +285,40 @@ public class CommandeView extends BorderPane implements com.minierp.ui.Refreshab
             switch (newStatus) {
                 case "VALIDEE":
                     commandeController.valider(selected.getId());
-                    showSuccess("Commande validée");
+                    DialogHelper.showSuccess("Commande validée");
                     break;
                 case "ANNULEE":
                     commandeController.annuler(selected.getId());
-                    showSuccess("Commande annulée");
+                    DialogHelper.showSuccess("Commande annulée");
                     break;
                 case "LIVREE":
                     commandeController.livrer(selected.getId());
-                    showSuccess("Commande livrée");
+                    DialogHelper.showSuccess("Commande livrée");
                     break;
             }
             refreshTable();
         } catch (Exception e) {
-            showError("Erreur: " + e.getMessage());
+            DialogHelper.showError("Erreur: " + e.getMessage());
         }
     }
 
     private void handleGenerateFacture() {
         Commande selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showWarning("Veuillez sélectionner une commande.");
+            DialogHelper.showWarning("Veuillez sélectionner une commande.");
             return;
         }
 
         if (!"VALIDEE".equals(selected.getStatus()) && !"LIVREE".equals(selected.getStatus())) {
-            showWarning("La commande doit être validée ou livrée pour être facturée.");
+            DialogHelper.showWarning("La commande doit être validée ou livrée pour être facturée.");
             return;
         }
 
         try {
             factureController.genererDepuisCommande(selected.getId());
-            showSuccess("Facture générée avec succès");
+            DialogHelper.showSuccess("Facture générée avec succès");
         } catch (Exception e) {
-            showError("Erreur: " + e.getMessage());
+            DialogHelper.showError("Erreur: " + e.getMessage());
         }
     }
 
@@ -371,15 +371,4 @@ public class CommandeView extends BorderPane implements com.minierp.ui.Refreshab
         table.refresh();
     }
 
-    private void showSuccess(String message) {
-        Notifications.create().title("Succès").text(message).hideAfter(Duration.seconds(3)).showInformation();
-    }
-
-    private void showWarning(String message) {
-        Notifications.create().title("Attention").text(message).hideAfter(Duration.seconds(3)).showWarning();
-    }
-
-    private void showError(String message) {
-        Notifications.create().title("Erreur").text(message).hideAfter(Duration.seconds(5)).showError();
-    }
 }

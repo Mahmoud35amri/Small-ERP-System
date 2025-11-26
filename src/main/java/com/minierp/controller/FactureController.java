@@ -28,9 +28,9 @@ public class FactureController {
     public Facture genererDepuisCommande(int commandeId) {
         double montant = CommandeController.getInstance().calculerTTC(commandeId);
         List<Facture> factures = getFactures();
-        // Simple ID generation
-        int maxId = factures.stream().mapToInt(Facture::getId).max().orElse(0);
-        Facture f = new Facture(maxId + 1, commandeId, LocalDate.now(), "NON_PAYEE", montant);
+        // Use IdGenerator
+        int newId = com.minierp.util.IdGenerator.generate(factures);
+        Facture f = new Facture(newId, commandeId, LocalDate.now(), "NON_PAYEE", montant);
         factures.add(f);
         return f;
     }
@@ -59,8 +59,8 @@ public class FactureController {
         if (f == null)
             throw new IllegalArgumentException("Facture not found");
         List<Facture> factures = getFactures();
-        int maxId = factures.stream().mapToInt(Facture::getId).max().orElse(0);
-        Facture avoir = new Facture(maxId + 1, f.getCommandeId(), LocalDate.now(), "AVOIR",
+        int newId = com.minierp.util.IdGenerator.generate(factures);
+        Facture avoir = new Facture(newId, f.getCommandeId(), LocalDate.now(), "AVOIR",
                 -f.getMontant());
         factures.add(avoir);
         return avoir;

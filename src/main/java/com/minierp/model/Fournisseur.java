@@ -2,7 +2,7 @@ package com.minierp.model;
 
 import java.util.Objects;
 
-public class Fournisseur {
+public class Fournisseur implements Identifiable {
     private int id;
     private String code;
     private String nomSociete;

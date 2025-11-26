@@ -11,8 +11,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
+
+import com.minierp.util.DialogHelper;
 
 import java.time.format.DateTimeFormatter;
 
@@ -62,7 +62,7 @@ public class FactureView extends BorderPane implements com.minierp.ui.Refreshabl
 
         Button btnPrint = new Button("Imprimer PDF");
         btnPrint.getStyleClass().add("secondary-button");
-        btnPrint.setOnAction(e -> showSuccess("Impression simulée (PDF généré)"));
+        btnPrint.setOnAction(e -> DialogHelper.showSuccess("Impression simulée (PDF généré)"));
 
         HBox toolbar = new HBox(10, btnPay, btnPrint);
         toolbar.setAlignment(Pos.CENTER_LEFT);
@@ -113,16 +113,16 @@ public class FactureView extends BorderPane implements com.minierp.ui.Refreshabl
     private void handleMarkPaid() {
         Facture selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showWarning("Veuillez sélectionner une facture.");
+            DialogHelper.showWarning("Veuillez sélectionner une facture.");
             return;
         }
 
         try {
             factureController.marquerPayee(selected.getId());
-            showSuccess("Facture marquée comme payée");
+            DialogHelper.showSuccess("Facture marquée comme payée");
             refreshTable();
         } catch (Exception e) {
-            showError("Erreur: " + e.getMessage());
+            DialogHelper.showError("Erreur: " + e.getMessage());
         }
     }
 
@@ -131,15 +131,4 @@ public class FactureView extends BorderPane implements com.minierp.ui.Refreshabl
         table.refresh();
     }
 
-    private void showSuccess(String message) {
-        Notifications.create().title("Succès").text(message).hideAfter(Duration.seconds(3)).showInformation();
-    }
-
-    private void showWarning(String message) {
-        Notifications.create().title("Attention").text(message).hideAfter(Duration.seconds(3)).showWarning();
-    }
-
-    private void showError(String message) {
-        Notifications.create().title("Erreur").text(message).hideAfter(Duration.seconds(5)).showError();
-    }
 }
