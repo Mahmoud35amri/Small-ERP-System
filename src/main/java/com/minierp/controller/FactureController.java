@@ -1,16 +1,16 @@
 package com.minierp.controller;
 
+import com.minierp.dao.FactureDAO;
 import com.minierp.model.Facture;
-import com.minierp.service.EntrepriseRegistry;
 import java.io.File;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FactureController {
     private static FactureController instance;
+    private final FactureDAO factureDAO;
 
     private FactureController() {
+        this.factureDAO = new FactureDAO();
     }
 
     public static synchronized FactureController getInstance() {
@@ -20,58 +20,27 @@ public class FactureController {
         return instance;
     }
 
-    // Helper to get current entreprise's invoices
-    private List<Facture> getFactures() {
-        return EntrepriseRegistry.current().factures;
-    }
-
     public Facture genererDepuisCommande(int commandeId) {
-        double montant = CommandeController.getInstance().calculerTTC(commandeId);
-        List<Facture> factures = getFactures();
-        // Use IdGenerator
-        int newId = com.minierp.util.IdGenerator.generate(factures);
-        Facture f = new Facture(newId, commandeId, LocalDate.now(), "NON_PAYEE", montant);
-        factures.add(f);
-        return f;
-    }
-
-    private Facture findById(int id) {
-        return getFactures().stream().filter(f -> f.getId() == id).findFirst().orElse(null);
+        return factureDAO.genererDepuisCommande(commandeId);
     }
 
     public void marquerPayee(int id) {
-        Facture f = findById(id);
-        if (f == null)
-            throw new IllegalArgumentException("Facture not found");
-        f.setStatus("PAYEE");
+        factureDAO.marquerPayee(id);
     }
 
     public void marquerPartiellement(int id, double montantPaye) {
-        Facture f = findById(id);
-        if (f == null)
-            throw new IllegalArgumentException("Facture not found");
-        f.setStatus("PARTIELLE");
-        // Logic to track partial payment could be added here
+        factureDAO.marquerPartiellement(id, montantPaye);
     }
 
     public Facture genererAvoir(int factureId) {
-        Facture f = findById(factureId);
-        if (f == null)
-            throw new IllegalArgumentException("Facture not found");
-        List<Facture> factures = getFactures();
-        int newId = com.minierp.util.IdGenerator.generate(factures);
-        Facture avoir = new Facture(newId, f.getCommandeId(), LocalDate.now(), "AVOIR",
-                -f.getMontant());
-        factures.add(avoir);
-        return avoir;
+        return factureDAO.genererAvoir(factureId);
     }
 
     public List<Facture> lister() {
-        return new ArrayList<>(getFactures());
+        return factureDAO.lister();
     }
 
     public File genererPDF(int factureId) {
-        // Placeholder
-        return new File("facture_" + factureId + ".pdf");
+        return factureDAO.genererPDF(factureId);
     }
 }

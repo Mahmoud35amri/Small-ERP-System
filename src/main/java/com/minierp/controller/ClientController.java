@@ -1,16 +1,15 @@
 package com.minierp.controller;
 
+import com.minierp.dao.ClientDAO;
 import com.minierp.model.Client;
-import com.minierp.service.EntrepriseRegistry;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ClientController {
     private static ClientController instance;
+    private final ClientDAO clientDAO;
 
     private ClientController() {
+        this.clientDAO = new ClientDAO();
     }
 
     public static synchronized ClientController getInstance() {
@@ -20,67 +19,28 @@ public class ClientController {
         return instance;
     }
 
-    // Helper to get current entreprise's clients
-    private List<Client> getClients() {
-        return EntrepriseRegistry.current().clients;
-    }
-
     public Client creer(Client c) {
-        if (c.getNom() == null || c.getNom().isEmpty()) {
-            throw new IllegalArgumentException("Nom is required");
-        }
-        List<Client> clients = getClients();
-        // Use IdGenerator
-        c.setId(com.minierp.util.IdGenerator.generate(clients));
-        c.setDateCreation(LocalDate.now());
-        clients.add(c);
-        return c;
+        return clientDAO.creer(c);
     }
 
     public Client modifier(Client c) {
-        if (c.getId() == 0) {
-            throw new IllegalArgumentException("Client ID is required for update");
-        }
-        List<Client> clients = getClients();
-        for (int i = 0; i < clients.size(); i++) {
-            if (clients.get(i).getId() == c.getId()) {
-                clients.set(i, c);
-                return c;
-            }
-        }
-        throw new IllegalArgumentException("Client not found");
+        return clientDAO.modifier(c);
     }
 
     public void supprimer(int id) {
-        List<Client> clients = getClients();
-        for (Client c : clients) {
-            if (c.getId() == id) {
-                clients.remove(c);
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Client not found");
+        clientDAO.supprimer(id);
     }
 
     public Client rechercherParCode(String code) {
-        return getClients().stream()
-                .filter(c -> c.getCode().equalsIgnoreCase(code))
-                .findFirst()
-                .orElse(null);
+        return clientDAO.rechercherParCode(code);
     }
 
     public List<Client> rechercher(String filtre) {
-        if (filtre == null || filtre.isEmpty())
-            return lister();
-        String lowerFilter = filtre.toLowerCase();
-        return getClients().stream()
-                .filter(c -> c.getNom().toLowerCase().contains(lowerFilter) ||
-                        c.getCode().toLowerCase().contains(lowerFilter))
-                .collect(Collectors.toList());
+        return clientDAO.rechercher(filtre);
     }
 
     public List<Client> lister() {
-        return new ArrayList<>(getClients());
+        return clientDAO.lister();
     }
 
     public double calculerChiffreAffaires(int clientId) {
