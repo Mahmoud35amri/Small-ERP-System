@@ -11,7 +11,6 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -25,7 +24,6 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 
 import com.minierp.util.DialogHelper;
-import org.controlsfx.control.Rating;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 
@@ -101,34 +99,6 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
 
         TableColumn<Fournisseur, Integer> colEval = new TableColumn<>("Évaluation");
         colEval.setCellValueFactory(new PropertyValueFactory<>("evaluation"));
-        colEval.setCellFactory(col -> new TableCell<Fournisseur, Integer>() {
-            private final Rating rating = new Rating(5);
-            {
-                rating.setUpdateOnHover(true);
-                rating.setPartialRating(false);
-                rating.ratingProperty().addListener((obs, oldVal, newVal) -> {
-                    if (getTableRow() != null && getTableRow().getItem() != null) {
-                        Fournisseur f = getTableRow().getItem();
-                        // Avoid infinite loop if update comes from model
-                        if (f.getEvaluation() != newVal.intValue()) {
-                            fournisseurController.evaluer(f.getId(), newVal.intValue());
-                            // No need to refresh whole table, model is updated.
-                        }
-                    }
-                });
-            }
-
-            @Override
-            protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    rating.setRating(item);
-                    setGraphic(rating);
-                }
-            }
-        });
 
         @SuppressWarnings("unchecked")
         TableColumn<Fournisseur, ?>[] columns = new TableColumn[] { colCode, colNom, colContact, colPhone, colEval };
@@ -161,6 +131,7 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
         TextField contactField = new TextField();
         TextField phoneField = new TextField();
         TextField delaiField = new TextField();
+        TextField evaluationField = new TextField(); // Simple text field for evaluation
         TextArea conditionsArea = new TextArea();
         conditionsArea.setPrefRowCount(3);
 
@@ -170,6 +141,7 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
             contactField.setText(fournisseur.getContact());
             phoneField.setText(fournisseur.getPhone());
             delaiField.setText(String.valueOf(fournisseur.getDelaiLivraison()));
+            evaluationField.setText(String.valueOf(fournisseur.getEvaluation()));
             conditionsArea.setText(fournisseur.getConditions());
         }
 
@@ -183,8 +155,10 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
         grid.add(phoneField, 1, 3);
         grid.add(new Label("Délai (jours):"), 0, 4);
         grid.add(delaiField, 1, 4);
-        grid.add(new Label("Conditions:"), 0, 5);
-        grid.add(conditionsArea, 1, 5);
+        grid.add(new Label("Évaluation (0-5):"), 0, 5);
+        grid.add(evaluationField, 1, 5);
+        grid.add(new Label("Conditions:"), 0, 6);
+        grid.add(conditionsArea, 1, 6);
 
         Platform.runLater(() -> {
             ValidationSupport validationSupport = new ValidationSupport();
@@ -192,6 +166,8 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
             validationSupport.registerValidator(nomField, Validator.createEmptyValidator("Nom requis"));
             validationSupport.registerValidator(delaiField,
                     Validator.createRegexValidator("Nombre entier requis", "\\d+", null));
+            validationSupport.registerValidator(evaluationField,
+                    Validator.createRegexValidator("0-5 requis", "[0-5]", null));
         });
 
         dialog.getDialogPane().setContent(grid);
@@ -208,9 +184,13 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
                 } catch (NumberFormatException e) {
                     f.setDelaiLivraison(0); // Should be handled by validator
                 }
+                try {
+                    f.setEvaluation(Integer.parseInt(evaluationField.getText()));
+                } catch (NumberFormatException e) {
+                    f.setEvaluation(3); // Default if empty or invalid
+                }
                 f.setConditions(conditionsArea.getText());
-                if (fournisseur == null)
-                    f.setEvaluation(3); // Default rating
+                // removed default evaluation setting as it's handled above or by input
                 return f;
             }
             return null;

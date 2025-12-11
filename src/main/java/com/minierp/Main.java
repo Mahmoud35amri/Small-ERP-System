@@ -27,7 +27,6 @@ public class Main extends Application {
         viewManager.setView("Commande", new com.minierp.ui.commande.CommandeView());
         viewManager.setView("Facture", new com.minierp.ui.facture.FactureView());
 
-        // Load Login View initially
         viewManager.showLogin();
 
         Scene scene = new Scene(viewManager.getMainLayout(), 1024, 768);
