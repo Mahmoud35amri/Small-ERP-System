@@ -124,12 +124,10 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
     public void refreshTree() {
         List<Categorie> allCategories = categorieController.lister();
 
-        // Find roots (categories with no parent or parentId 0/null)
-        Categorie dummyRoot = new Categorie(); // Hidden root
+        Categorie dummyRoot = new Categorie();
         rootItem = new TreeItem<>(dummyRoot);
         treeView.setShowRoot(false);
 
-        // Build hierarchy
         buildTree(rootItem, allCategories);
         treeView.setRoot(rootItem);
     }
@@ -137,7 +135,6 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
     private void buildTree(TreeItem<Categorie> parentItem, List<Categorie> allCategories) {
         Integer parentId = parentItem.getValue().getId() == 0 ? null : parentItem.getValue().getId();
 
-        // If parentItem is the dummy root, we look for categories with null parentId
         if (parentItem.getValue() == rootItem.getValue()) {
             List<Categorie> roots = allCategories.stream()
                     .filter(c -> c.getParentId() == null || c.getParentId() == 0)
@@ -150,7 +147,7 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
             }
         } else {
             List<Categorie> children = allCategories.stream()
-                    .filter(c -> Objects.equals(c.getParentId(), parentId))
+                    .filter(c -> java.util.Objects.equals(c.getParentId(), parentId))
                     .collect(Collectors.toList());
 
             for (Categorie cat : children) {
@@ -230,10 +227,9 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
 
         ComboBox<Categorie> parentCombo = new ComboBox<>();
         List<Categorie> allCats = categorieController.lister();
-        // Remove self and children to avoid cycles if editing
         if (categorie != null) {
             allCats = allCats.stream()
-                    .filter(c -> c.getId() != categorie.getId()) // Not self
+                    .filter(c -> c.getId() != categorie.getId())
                     .collect(Collectors.toList());
         }
         parentCombo.getItems().addAll(allCats);
@@ -295,7 +291,6 @@ public class CategorieView extends BorderPane implements com.minierp.ui.Refresha
         });
     }
 
-    // Inner class for Drag & Drop
     private class DragDropTreeCell extends TreeCell<Categorie> {
         public DragDropTreeCell() {
             setOnDragDetected(event -> {

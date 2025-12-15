@@ -37,7 +37,7 @@ public class TestDataLoader {
             EntrepriseRegistry.getInstance().switchTo(e1.getId());
 
             // Users
-            Utilisateur user1 = new Utilisateur(0, "Mohamed", "Ben Ali", "mohamed@techexpert.tn", "123456", "GERANT",
+            Utilisateur user1 = new Utilisateur(0, "Mohamed", "Ben Ali", "mohamed@techexpert.tn", "123456", "ADMIN",
                     true);
             user1.setEntrepriseId(e1.getId());
             UtilisateurController.getInstance().creer(user1);

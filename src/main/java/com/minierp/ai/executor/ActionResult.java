@@ -2,9 +2,6 @@ package com.minierp.ai.executor;
 
 import java.util.List;
 
-/**
- * Result of executing an AI action.
- */
 public class ActionResult {
 
     private final boolean success;
@@ -19,30 +16,18 @@ public class ActionResult {
         this.errorCode = errorCode;
     }
 
-    /**
-     * Create a successful result with data.
-     */
     public static ActionResult success(String message, Object data) {
         return new ActionResult(true, message, data, null);
     }
 
-    /**
-     * Create a successful result without data.
-     */
     public static ActionResult success(String message) {
         return new ActionResult(true, message, null, null);
     }
 
-    /**
-     * Create an error result.
-     */
     public static ActionResult error(String message, String errorCode) {
         return new ActionResult(false, message, null, errorCode);
     }
 
-    /**
-     * Create an error result without code.
-     */
     public static ActionResult error(String message) {
         return new ActionResult(false, message, null, "GENERAL_ERROR");
     }

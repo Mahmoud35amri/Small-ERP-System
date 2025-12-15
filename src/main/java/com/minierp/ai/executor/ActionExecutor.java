@@ -10,11 +10,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Executes AI actions by routing them to existing ERP DAOs and Controllers.
- * The AI never accesses data directly - this executor handles all actual
- * operations.
- */
 public class ActionExecutor {
 
     private static final int LOW_STOCK_THRESHOLD = 10; // Products with less than 10 units
@@ -33,9 +28,6 @@ public class ActionExecutor {
         this.factureDAO = new FactureDAO();
     }
 
-    /**
-     * Execute an AI response action.
-     */
     public ActionResult execute(AIResponse response) {
         if (response == null) {
             return ActionResult.error("No response to execute", "NULL_RESPONSE");
@@ -48,7 +40,6 @@ public class ActionExecutor {
                     "UNKNOWN_ACTION");
         }
 
-        // Check confidence threshold
         if (response.getConfidence() < 0.5) {
             return ActionResult.error(
                     "I'm not confident enough about this request. Please be more specific.",
@@ -70,9 +61,6 @@ public class ActionExecutor {
         }
     }
 
-    /**
-     * GET_TODAY_SALES: Get orders from today.
-     */
     private ActionResult getTodaySales() {
         LocalDate today = LocalDate.now();
         List<Commande> allOrders = commandeDAO.lister();
@@ -90,9 +78,6 @@ public class ActionExecutor {
                 todayOrders);
     }
 
-    /**
-     * GET_MONTHLY_SALES: Get orders from current month.
-     */
     private ActionResult getMonthlySales() {
         LocalDate now = LocalDate.now();
         int currentMonth = now.getMonthValue();
@@ -118,9 +103,6 @@ public class ActionExecutor {
                 monthlyOrders);
     }
 
-    /**
-     * GET_LOW_STOCK: Get products with stock below threshold.
-     */
     private ActionResult getLowStock() {
         List<Produit> allProducts = produitDAO.lister();
 
@@ -140,9 +122,6 @@ public class ActionExecutor {
                 lowStockProducts);
     }
 
-    /**
-     * GET_PENDING_ORDERS: Get orders in BROUILLON (draft) status.
-     */
     private ActionResult getPendingOrders() {
         List<Commande> allOrders = commandeDAO.lister();
 
@@ -159,16 +138,11 @@ public class ActionExecutor {
                 pendingOrders);
     }
 
-    /**
-     * CREATE_ORDER: Create a new order.
-     * Required parameters: clientName, productName, quantity
-     */
     private ActionResult createOrder(AIResponse response) {
         String clientName = response.getStringParam("clientName");
         String productName = response.getStringParam("productName");
         Integer quantity = response.getIntParam("quantity");
 
-        // Validate parameters
         if (clientName == null || clientName.isBlank()) {
             return ActionResult.error("Client name is required", "MISSING_CLIENT");
         }
@@ -179,7 +153,6 @@ public class ActionExecutor {
             return ActionResult.error("Valid quantity is required", "INVALID_QUANTITY");
         }
 
-        // Find client by name
         List<Client> clients = clientDAO.lister();
         Client client = clients.stream()
                 .filter(c -> c.getNom() != null &&
@@ -193,7 +166,6 @@ public class ActionExecutor {
                     "CLIENT_NOT_FOUND");
         }
 
-        // Find product by name
         List<Produit> products = produitDAO.lister();
         Produit product = products.stream()
                 .filter(p -> p.getNom() != null &&
@@ -207,7 +179,6 @@ public class ActionExecutor {
                     "PRODUCT_NOT_FOUND");
         }
 
-        // Check stock availability
         if (product.getQuantiteStock() < quantity) {
             return ActionResult.error(
                     "Insufficient stock for " + product.getNom() + ". Available: " +
@@ -215,12 +186,9 @@ public class ActionExecutor {
                     "INSUFFICIENT_STOCK");
         }
 
-        // Create order
         Commande order = new Commande();
         order.setClientId(client.getId());
         Commande createdOrder = commandeDAO.creer(order);
-
-        // Add line item
         LigneCommande ligne = new LigneCommande();
         ligne.setProduitId(product.getId());
         ligne.setQuantite(quantity);
@@ -233,10 +201,6 @@ public class ActionExecutor {
                 createdOrder);
     }
 
-    /**
-     * CREATE_INVOICE: Create an invoice from an order.
-     * Required parameters: orderId
-     */
     private ActionResult createInvoice(AIResponse response) {
         Integer orderId = response.getIntParam("orderId");
 
@@ -244,7 +208,6 @@ public class ActionExecutor {
             return ActionResult.error("Order ID is required", "MISSING_ORDER_ID");
         }
 
-        // Verify order exists
         List<Commande> orders = commandeDAO.lister();
         Commande order = orders.stream()
                 .filter(c -> c.getId() == orderId)
@@ -255,7 +218,6 @@ public class ActionExecutor {
             return ActionResult.error("Order not found: #" + orderId, "ORDER_NOT_FOUND");
         }
 
-        // Generate invoice
         try {
             Facture invoice = factureDAO.genererDepuisCommande(orderId);
             return ActionResult.success(

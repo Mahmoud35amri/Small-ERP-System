@@ -22,18 +22,18 @@ public class LoginView extends VBox {
         setStyle(
                 "-fx-padding: 40; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0); -fx-background-radius: 5;");
 
-        Label titleLabel = new Label("Login");
+        Label titleLabel = new Label("Connexion");
         titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
         emailField = new TextField();
         emailField.setPromptText("Email");
-        emailField.setText("mohamed@techexpert.tn"); // Pre-fill for convenience
+        emailField.setText("mohamed@techexpert.tn");
 
         passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
-        passwordField.setText("123456"); // Pre-fill
+        passwordField.setPromptText("Mot de passe");
+        passwordField.setText("123456");
 
-        Button loginButton = new Button("Login");
+        Button loginButton = new Button("Se connecter");
         loginButton.setMaxWidth(Double.MAX_VALUE);
         loginButton.setDefaultButton(true);
         loginButton.setOnAction(e -> handleLogin());
@@ -53,14 +53,14 @@ public class LoginView extends VBox {
             SessionService.getInstance().login(email, password);
             ViewManager.getInstance().showMainInterface();
             Notifications.create()
-                    .title("Welcome")
-                    .text("Logged in successfully")
+                    .title("Bienvenue")
+                    .text("Connexion réussie")
                     .showInformation();
         } catch (Exception e) {
-            errorLabel.setText("Invalid credentials");
+            errorLabel.setText("Identifiants incorrects");
             errorLabel.setVisible(true);
             Notifications.create()
-                    .title("Login Failed")
+                    .title("Échec de connexion")
                     .text(e.getMessage())
                     .showError();
         }

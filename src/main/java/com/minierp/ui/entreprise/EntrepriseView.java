@@ -2,21 +2,16 @@ package com.minierp.ui.entreprise;
 
 import com.minierp.controller.EntrepriseController;
 import com.minierp.model.Entreprise;
-import com.minierp.ui.components.SearchBar;
-import com.minierp.util.DialogHelper;
+
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -42,20 +37,6 @@ public class EntrepriseView extends BorderPane implements com.minierp.ui.Refresh
         this.controller = EntrepriseController.getInstance();
         setPadding(new Insets(20));
 
-        // Top Bar
-        HBox topBar = new HBox(10);
-        SearchBar searchBar = new SearchBar("Search entreprises...", this::filterTable);
-        Button addButton = new Button("New Entreprise");
-        addButton.setOnAction(e -> showDialog(null));
-
-        Button deleteButton = new Button("Delete");
-        deleteButton.setOnAction(e -> handleDelete());
-
-        topBar.getChildren().addAll(searchBar, addButton, deleteButton);
-        setTop(topBar);
-        BorderPane.setMargin(topBar, new Insets(0, 0, 10, 0));
-
-        // Main Content ScrollPane
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background-color: transparent;");
@@ -63,14 +44,13 @@ public class EntrepriseView extends BorderPane implements com.minierp.ui.Refresh
         VBox mainContent = new VBox(20);
         mainContent.setPadding(new Insets(10));
 
-        // Table
+        // Table initialization
         table = new TableView<>();
         setupTable();
         table.setPrefHeight(150);
 
-        VBox tableSection = new VBox(5, new Label("Entreprise Details"), table);
+        VBox tableSection = new VBox(5, new Label("Détails de l'Entreprise"), table);
 
-        // Dashboard
         lblUsers = new Label("0");
         lblProducts = new Label("0");
         lblCategories = new Label("0");
@@ -105,34 +85,6 @@ public class EntrepriseView extends BorderPane implements com.minierp.ui.Refresh
 
         table.getColumns().addAll(idCol, nomCol, emailCol, capitalCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    }
-
-    private void filterTable(String query) {
-        if (query == null || query.isEmpty()) {
-            refresh();
-            return;
-        }
-
-        java.util.List<Entreprise> filtered = controller.lister().stream()
-                .filter(e -> e.getNom().toLowerCase().contains(query.toLowerCase()) ||
-                        e.getEmail().toLowerCase().contains(query.toLowerCase()))
-                .collect(Collectors.toList());
-
-        // Also apply multi-tenancy filter if needed, but refresh() handles the source
-        // of truth.
-        // Better to filter the already filtered list from refresh() logic, or just rely
-        // on refresh() logic being base.
-        // But here we are filtering all companies.
-        // Let's apply the same user filter here.
-
-        com.minierp.model.Utilisateur currentUser = com.minierp.service.SessionService.getInstance().getConnectedUser();
-        if (currentUser != null) {
-            filtered = filtered.stream()
-                    .filter(e -> e.getId() == currentUser.getEntrepriseId())
-                    .collect(Collectors.toList());
-        }
-
-        table.setItems(FXCollections.observableArrayList(filtered));
     }
 
     @Override
@@ -220,7 +172,7 @@ public class EntrepriseView extends BorderPane implements com.minierp.ui.Refresh
                     .filter(c -> c.getId() == entry.getKey())
                     .map(Categorie::getNom)
                     .findFirst()
-                    .orElse("Unknown");
+                    .orElse("Inconnu");
             pieChart.getData().add(new PieChart.Data(catName, entry.getValue()));
         }
 
@@ -246,65 +198,4 @@ public class EntrepriseView extends BorderPane implements com.minierp.ui.Refresh
         }
     }
 
-    private void handleDelete() {
-        Entreprise selected = table.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            DialogHelper.showWarning("Select an entreprise to delete");
-            return;
-        }
-        if (DialogHelper.showConfirmation("Confirm Delete", "Delete " + selected.getNom() + "?")) {
-            controller.supprimer(selected);
-            refresh();
-            DialogHelper.showSuccess("Deleted successfully");
-        }
-    }
-
-    private void showDialog(Entreprise entreprise) {
-        Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.setTitle(entreprise == null ? "New Entreprise" : "Edit Entreprise");
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20));
-
-        TextField nomField = new TextField(entreprise != null ? entreprise.getNom() : "");
-        TextField emailField = new TextField(entreprise != null ? entreprise.getEmail() : "");
-        TextField capitalField = new TextField(entreprise != null ? String.valueOf(entreprise.getCapital()) : "");
-
-        grid.addRow(0, new Label("Nom:"), nomField);
-        grid.addRow(1, new Label("Email:"), emailField);
-        grid.addRow(2, new Label("Capital:"), capitalField);
-
-        Button saveBtn = new Button("Save");
-        saveBtn.setOnAction(e -> {
-            try {
-                String nom = nomField.getText();
-                String email = emailField.getText();
-                double capital = Double.parseDouble(capitalField.getText());
-
-                if (entreprise == null) {
-                    Entreprise newEnt = new Entreprise(0, nom, "", "", email, capital);
-                    controller.creer(newEnt);
-                } else {
-                    entreprise.setNom(nom);
-                    entreprise.setEmail(email);
-                    entreprise.setCapital(capital);
-                    controller.modifier(entreprise);
-                }
-                refresh();
-                dialog.close();
-                DialogHelper.showSuccess("Saved successfully");
-            } catch (Exception ex) {
-                DialogHelper.showError("Error: " + ex.getMessage());
-            }
-        });
-
-        grid.add(saveBtn, 1, 3);
-
-        Scene scene = new Scene(grid);
-        dialog.setScene(scene);
-        dialog.showAndWait();
-    }
 }

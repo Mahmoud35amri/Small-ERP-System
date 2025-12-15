@@ -190,7 +190,7 @@ public class FournisseurView extends BorderPane implements com.minierp.ui.Refres
                     f.setEvaluation(3); // Default if empty or invalid
                 }
                 f.setConditions(conditionsArea.getText());
-                // removed default evaluation setting as it's handled above or by input
+
                 return f;
             }
             return null;

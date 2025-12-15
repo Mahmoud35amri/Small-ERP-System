@@ -16,9 +16,6 @@ import javafx.concurrent.Task;
 
 import java.util.List;
 
-/**
- * AI Assistant view - chat interface for natural language ERP interactions.
- */
 public class AIAssistantView extends VBox {
 
     private final AIService aiService;
@@ -41,18 +38,15 @@ public class AIAssistantView extends VBox {
         setPadding(new Insets(15));
         setStyle("-fx-background-color: #f5f5f5;");
 
-        // Header
-        Label header = new Label("🤖 AI Assistant");
+        Label header = new Label("🤖 Assistant IA");
         header.setFont(Font.font("System", FontWeight.BOLD, 20));
         header.setTextFill(Color.web("#2196F3"));
 
-        Label subtitle = new Label("Ask me about sales, orders, stock, or create new orders using natural language");
+        Label subtitle = new Label("Posez-moi des questions sur les ventes, stocks, ou créez des commandes...");
         subtitle.setStyle("-fx-text-fill: #666;");
 
-        // Configuration panel
         configPanel = createConfigPanel();
 
-        // Chat area
         chatArea = new TextArea();
         chatArea.setEditable(false);
         chatArea.setWrapText(true);
@@ -63,17 +57,15 @@ public class AIAssistantView extends VBox {
                 "• \"Show me today's sales\"\n" +
                 "• \"What products are running low on stock?\"\n" +
                 "• \"Show pending orders\"\n" +
-                "• \"Create an order for client Dupont, 5 units of Laptop\"\n" +
+                "• \"Create an order for client Groupe loukil, 5 units of Iphone 15 Pro Max\"\n" +
                 "• \"Create invoice for order 1\"\n\n" +
                 "⚙️ Please configure your Gemini API key above to get started.\n" +
                 "─────────────────────────────────────────\n");
         VBox.setVgrow(chatArea, Priority.ALWAYS);
 
-        // Input area
         HBox inputBox = createInputArea();
 
-        // Status bar
-        statusLabel = new Label("Status: Not configured");
+        statusLabel = new Label("Statut : Non configuré");
         statusLabel.setStyle("-fx-text-fill: #888; -fx-font-size: 11px;");
 
         getChildren().addAll(header, subtitle, new Separator(), configPanel, chatArea, inputBox, statusLabel);
@@ -87,27 +79,27 @@ public class AIAssistantView extends VBox {
         panel.setStyle(
                 "-fx-background-color: #fff; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;");
 
-        Label configLabel = new Label("🔑 Gemini API Configuration");
+        Label configLabel = new Label("🔑 Configuration API Gemini");
         configLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
         HBox keyBox = new HBox(10);
         keyBox.setAlignment(Pos.CENTER_LEFT);
 
         apiKeyField = new TextField();
-        apiKeyField.setPromptText("Enter your Gemini API key...");
+        apiKeyField.setPromptText("Entrez votre clé API Gemini...");
         apiKeyField.setPrefWidth(350);
         HBox.setHgrow(apiKeyField, Priority.ALWAYS);
 
-        configureButton = new Button("Configure");
+        configureButton = new Button("Configurer");
         configureButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
         configureButton.setOnAction(e -> configureApiKey());
 
-        Hyperlink getKeyLink = new Hyperlink("Get free API key");
+        Hyperlink getKeyLink = new Hyperlink("Obtenir une clé API");
         getKeyLink.setOnAction(e -> {
             try {
                 java.awt.Desktop.getDesktop().browse(new java.net.URI("https://aistudio.google.com/apikey"));
             } catch (Exception ex) {
-                appendToChat("System", "Please visit: https://aistudio.google.com/apikey");
+                appendToChat("Système", "Veuillez visiter : https://aistudio.google.com/apikey");
             }
         });
 
@@ -123,14 +115,14 @@ public class AIAssistantView extends VBox {
         box.setPadding(new Insets(5, 0, 0, 0));
 
         inputField = new TextField();
-        inputField.setPromptText("Type your request here... (e.g., 'Show today's sales')");
+        inputField.setPromptText("Tapez votre demande ici... (ex: 'Montre les ventes du jour')");
         inputField.setPrefHeight(40);
         inputField.setStyle("-fx-font-size: 14px;");
         HBox.setHgrow(inputField, Priority.ALWAYS);
 
         inputField.setOnAction(e -> sendMessage());
 
-        sendButton = new Button("Send");
+        sendButton = new Button("Envoyer");
         sendButton.setPrefHeight(40);
         sendButton.setPrefWidth(80);
         sendButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;");
@@ -144,7 +136,7 @@ public class AIAssistantView extends VBox {
     private void configureApiKey() {
         String apiKey = apiKeyField.getText().trim();
         if (apiKey.isEmpty()) {
-            DialogHelper.showError("Please enter a valid API key.");
+            DialogHelper.showError("Veuillez entrer une clé API valide.");
             return;
         }
 
@@ -153,23 +145,23 @@ public class AIAssistantView extends VBox {
             isConfigured = true;
             apiKeyField.setText(aiService.getMaskedApiKey());
             apiKeyField.setDisable(true);
-            configureButton.setText("✓ Configured");
+            configureButton.setText("✓ Configuré");
             configureButton.setDisable(true);
             configureButton.setStyle("-fx-background-color: #888; -fx-text-fill: white;");
 
-            appendToChat("System", "✅ Gemini API configured successfully! You can now ask questions.");
-            statusLabel.setText("Status: Ready");
+            appendToChat("Système", "✅ API Gemini configurée avec succès !");
+            statusLabel.setText("Statut : Prêt");
             statusLabel.setStyle("-fx-text-fill: #4CAF50; -fx-font-size: 11px;");
 
             updateUIState();
         } catch (Exception e) {
-            DialogHelper.showError("Failed to configure API: " + e.getMessage());
+            DialogHelper.showError("Échec de configuration : " + e.getMessage());
         }
     }
 
     private void sendMessage() {
         if (!isConfigured) {
-            DialogHelper.showError("Please configure your Gemini API key first.");
+            DialogHelper.showError("Veuillez d'abord configurer votre clé API.");
             return;
         }
 
@@ -179,12 +171,12 @@ public class AIAssistantView extends VBox {
         }
 
         // Display user message
-        appendToChat("You", message);
+        appendToChat("Vous", message);
         inputField.clear();
 
         // Disable input while processing
         setInputEnabled(false);
-        statusLabel.setText("Status: Processing...");
+        statusLabel.setText("Statut : Traitement...");
 
         // Process in background thread
         Task<AIService.ProcessResult> task = new Task<>() {
@@ -198,13 +190,13 @@ public class AIAssistantView extends VBox {
             AIService.ProcessResult result = task.getValue();
             displayResult(result);
             setInputEnabled(true);
-            statusLabel.setText("Status: Ready");
+            statusLabel.setText("Statut : Prêt");
         });
 
         task.setOnFailed(e -> {
-            appendToChat("Error", "Failed to process request: " + task.getException().getMessage());
+            appendToChat("Erreur", "Échec du traitement : " + task.getException().getMessage());
             setInputEnabled(true);
-            statusLabel.setText("Status: Error");
+            statusLabel.setText("Statut : Erreur");
         });
 
         new Thread(task).start();
@@ -216,22 +208,22 @@ public class AIAssistantView extends VBox {
 
             // Show AI interpretation if available
             if (result.getAiResponse() != null) {
-                String interpretation = String.format("Action: %s (confidence: %.0f%%)",
+                String interpretation = String.format("Action : %s (confiance : %.0f%%)",
                         result.getAiResponse().getAction(),
                         result.getAiResponse().getConfidence() * 100);
-                appendToChat("AI", interpretation);
+                appendToChat("IA", interpretation);
             }
 
             // Show result
             if (actionResult.isSuccess()) {
-                appendToChat("Result", "✅ " + actionResult.getMessage());
+                appendToChat("Résultat", "✅ " + actionResult.getMessage());
 
                 // Display data if present
                 if (actionResult.getData() != null) {
                     displayData(actionResult.getData());
                 }
             } else {
-                appendToChat("Result", "❌ " + actionResult.getMessage());
+                appendToChat("Résultat", "❌ " + actionResult.getMessage());
             }
 
             appendToChat("", "─────────────────────────────────────────");
@@ -251,7 +243,7 @@ public class AIAssistantView extends VBox {
             }
 
             if (list.size() > 10) {
-                sb.append("  ... and ").append(list.size() - 10).append(" more items\n");
+                sb.append("  ... et ").append(list.size() - 10).append(" autres éléments\n");
             }
 
             appendToChat("Data", sb.toString().trim());
@@ -262,13 +254,13 @@ public class AIAssistantView extends VBox {
 
     private String formatItem(Object item) {
         if (item instanceof Commande c) {
-            return String.format("Order #%d - Client: %d - Status: %s - Date: %s",
+            return String.format("Commande #%d - Client : %d - Statut : %s - Date : %s",
                     c.getId(), c.getClientId(), c.getStatus(), c.getDate());
         } else if (item instanceof Produit p) {
-            return String.format("%s (Stock: %d, Price: %.2f)",
+            return String.format("%s (Stock : %d, Prix : %.2f)",
                     p.getNom(), p.getQuantiteStock(), p.getPrixVente());
         } else if (item instanceof Facture f) {
-            return String.format("Invoice #%d - Order: %d - Amount: %.2f - Status: %s",
+            return String.format("Facture #%d - Commande : %d - Montant : %.2f - Statut : %s",
                     f.getId(), f.getCommandeId(), f.getMontant(), f.getStatus());
         } else if (item instanceof Client c) {
             return String.format("%s %s (%s)", c.getNom(), c.getPrenom(), c.getEmail());
@@ -298,9 +290,6 @@ public class AIAssistantView extends VBox {
         sendButton.setDisable(!configured);
     }
 
-    /**
-     * Get this view as a Region for integration with ViewManager.
-     */
     public Region getView() {
         return this;
     }

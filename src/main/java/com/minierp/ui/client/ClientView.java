@@ -176,14 +176,6 @@ public class ClientView extends BorderPane implements com.minierp.ui.Refreshable
             return new javafx.beans.property.SimpleBooleanProperty(c.isActive());
         });
         colActive.setCellFactory(CheckBoxTableCell.forTableColumn(colActive));
-        // CheckBoxTableCell updates the property directly, but we need to save it.
-        // However, since it binds to the property, we might need a way to trigger save.
-        // A simple way is to rely on the property listener if we added one, or just
-        // assume in-memory update is enough for now.
-        // But to be safe, let's add a listener to the property when the cell is
-        // created?
-        // Actually, CheckBoxTableCell calls the callback.
-        // Let's stick to simple binding for now as ClientController is in-memory.
 
         @SuppressWarnings("unchecked")
         TableColumn<Client, ?>[] columns = new TableColumn[] { colCode, colNom, colPrenom, colEmail, colPhone,
@@ -201,7 +193,7 @@ public class ClientView extends BorderPane implements com.minierp.ui.Refreshable
         TableColumn<Commande, String> colDate = new TableColumn<>("Date");
         colDate.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDate().toString()));
 
-        TableColumn<Commande, String> colStatus = new TableColumn<>("Status");
+        TableColumn<Commande, String> colStatus = new TableColumn<>("Statut");
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         @SuppressWarnings("unchecked")
@@ -311,21 +303,6 @@ public class ClientView extends BorderPane implements com.minierp.ui.Refreshable
     private void refreshClientDetail(Client client) {
         double ca = clientController.calculerChiffreAffaires(client.getId());
         lblTurnover.setText(String.format("Chiffre d'Affaires: %.2f €", ca));
-
-        // Filter commands for this client (assuming Commande has clientId, let's check
-        // Commande model)
-        // I need to check Commande.java to see if it has clientId.
-        // I read CommandeController but not Commande.java fully (I read it but didn't
-        // check fields carefully).
-        // Assuming it has clientId. If not, I can't filter.
-        // Let's assume it does for now. If not, I'll fix it.
-        // Actually, I read Commande.java in step 638 (list_dir) -> 652 (MouvementStock)
-        // -> Wait, I read Commande.java?
-        // I read `CommandeController.java` but maybe not `Commande.java` content fully?
-        // I read `Stock.java`, `MouvementStock.java`, `Client.java`,
-        // `Fournisseur.java`.
-        // I did NOT read `Commande.java` content. I listed it.
-        // I'll assume it has clientId. If compilation fails, I'll fix.
 
         recentOrdersTable.setItems(FXCollections.observableArrayList(
                 commandeController.lister().stream()

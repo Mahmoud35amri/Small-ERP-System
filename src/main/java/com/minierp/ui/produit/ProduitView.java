@@ -52,16 +52,13 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
     }
 
     private void initializeUI() {
-        // Toolbar
         HBox toolbar = createToolbar();
         setTop(toolbar);
 
-        // Table
         table = new TableView<>();
         setupTable();
         setCenter(table);
 
-        // Padding
         setPadding(new Insets(10));
     }
 
@@ -179,7 +176,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
         });
         colPrix.setPrefWidth(100);
 
-        TableColumn<Produit, Void> colBadges = new TableColumn<>("Status");
+        TableColumn<Produit, Void> colBadges = new TableColumn<>("Statut");
         colBadges.setCellFactory(new Callback<>() {
             @Override
             public TableCell<Produit, Void> call(TableColumn<Produit, Void> param) {
@@ -201,7 +198,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
                             }
 
                             if (p.isBestSeller()) {
-                                Label best = new Label("BEST");
+                                Label best = new Label("TOP");
                                 best.getStyleClass().add("badge-bestseller");
                                 badges.getChildren().add(best);
                             }
@@ -227,6 +224,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
     public void refreshTable() {
         List<Produit> produits = produitController.lister();
         filteredData = new FilteredList<>(FXCollections.observableArrayList(produits), p -> true);
+        table.setItems(filteredData);
         table.setItems(filteredData);
         filterTable();
 
@@ -276,7 +274,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
             TextField nomField = new TextField();
             TextField stockField = new TextField();
             TextField prixField = new TextField();
-            CheckBox bestSellerCheck = new CheckBox("Best Seller");
+            CheckBox bestSellerCheck = new CheckBox("Top Vente");
 
             ComboBox<Categorie> catCombo = new ComboBox<>();
             catCombo.getItems().addAll(categorieController.lister());
@@ -364,7 +362,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
                         p.setQuantiteStock(Integer.parseInt(stockField.getText()));
                         p.setPrixVente(Double.parseDouble(prixField.getText()));
                     } catch (NumberFormatException e) {
-                        // Should be handled by validator, but safe fallback
+
                     }
                     p.setBestSeller(bestSellerCheck.isSelected());
                     return p;
@@ -451,7 +449,7 @@ public class ProduitView extends BorderPane implements com.minierp.ui.Refreshabl
                     return null;
                 }
             } else if (dialogButton == removeType) {
-                return -1.0; // Signal to remove
+                return -1.0;
             }
             return null;
         });

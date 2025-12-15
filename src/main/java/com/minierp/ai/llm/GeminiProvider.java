@@ -9,10 +9,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-/**
- * Google Gemini API provider implementation.
- * Uses the Gemini REST API to generate structured JSON responses.
- */
 public class GeminiProvider {
 
     private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
@@ -32,18 +28,9 @@ public class GeminiProvider {
         this.gson = new Gson();
     }
 
-    /**
-     * Send a completion request to Gemini API.
-     * 
-     * @param systemPrompt The system instructions for the AI
-     * @param userMessage  The user's natural language input
-     * @return The AI's JSON response as a string
-     */
     public String complete(String systemPrompt, String userMessage) throws IOException, InterruptedException {
-        // Build request body
         JsonObject requestBody = buildRequestBody(systemPrompt, userMessage);
 
-        // Build HTTP request
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GEMINI_API_URL + "?key=" + apiKey))
                 .header("Content-Type", "application/json")
@@ -51,25 +38,18 @@ public class GeminiProvider {
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(requestBody)))
                 .build();
 
-        // Send request
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // Check for errors
         if (response.statusCode() != 200) {
             throw new IOException("Gemini API error: " + response.statusCode() + " - " + response.body());
         }
 
-        // Extract text from response
         return extractTextFromResponse(response.body());
     }
 
-    /**
-     * Build the Gemini API request body.
-     */
     private JsonObject buildRequestBody(String systemPrompt, String userMessage) {
         JsonObject requestBody = new JsonObject();
 
-        // System instruction
         JsonObject systemInstruction = new JsonObject();
         JsonObject systemParts = new JsonObject();
         systemParts.addProperty("text", systemPrompt);
@@ -78,7 +58,6 @@ public class GeminiProvider {
         systemInstruction.add("parts", createPartsArray(systemPrompt));
         requestBody.add("systemInstruction", systemInstruction);
 
-        // User content
         JsonObject userContent = new JsonObject();
         userContent.addProperty("role", "user");
         userContent.add("parts", createPartsArray(userMessage));
@@ -87,9 +66,8 @@ public class GeminiProvider {
         contents.add(userContent);
         requestBody.add("contents", contents);
 
-        // Generation config - request JSON output
         JsonObject generationConfig = new JsonObject();
-        generationConfig.addProperty("temperature", 0.1); // Low temperature for deterministic output
+        generationConfig.addProperty("temperature", 0.1);
         generationConfig.addProperty("topP", 0.8);
         generationConfig.addProperty("topK", 40);
         generationConfig.addProperty("maxOutputTokens", 1024);
@@ -99,9 +77,6 @@ public class GeminiProvider {
         return requestBody;
     }
 
-    /**
-     * Create a parts array with a single text element.
-     */
     private com.google.gson.JsonArray createPartsArray(String text) {
         JsonObject part = new JsonObject();
         part.addProperty("text", text);
@@ -110,19 +85,14 @@ public class GeminiProvider {
         return parts;
     }
 
-    /**
-     * Extract the text content from Gemini API response.
-     */
     private String extractTextFromResponse(String responseBody) throws IOException {
         try {
             JsonObject response = gson.fromJson(responseBody, JsonObject.class);
 
-            // Check for error
             if (response.has("error")) {
                 throw new IOException("Gemini API error: " + response.get("error").toString());
             }
 
-            // Navigate: candidates[0].content.parts[0].text
             if (response.has("candidates") && response.getAsJsonArray("candidates").size() > 0) {
                 JsonObject candidate = response.getAsJsonArray("candidates").get(0).getAsJsonObject();
                 if (candidate.has("content")) {
@@ -142,9 +112,6 @@ public class GeminiProvider {
         }
     }
 
-    /**
-     * Get provider name.
-     */
     public String getName() {
         return "Gemini";
     }

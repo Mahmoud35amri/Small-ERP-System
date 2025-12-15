@@ -22,22 +22,22 @@ public class Sidebar extends VBox {
         if (SessionService.getInstance().hasRole("ADMIN")) {
             addNavButton("Utilisateurs", "Utilisateur");
         }
-        addNavButton("Categories", "Categorie");
+        addNavButton("Catégories", "Categorie");
         addNavButton("Produits", "Produit");
         addNavButton("Stock", "Stock");
         addNavButton("Clients", "client");
         addNavButton("Fournisseurs", "fournisseur");
         addNavButton("Commandes", "Commande");
         addNavButton("Factures", "Facture");
-        addNavButton("🤖 AI Assistant", "AIAssistant");
+        addNavButton("🤖 Assistant IA", "AIAssistant");
 
-        Button settingsBtn = new Button("Settings");
+        Button settingsBtn = new Button("Paramètres");
         settingsBtn.getStyleClass().add("sidebar-button");
         settingsBtn.setMaxWidth(Double.MAX_VALUE);
         settingsBtn.setOnAction(e -> com.minierp.ui.utilisateur.UserSettingsWindow.show());
         getChildren().add(settingsBtn);
 
-        Button logoutBtn = new Button("Logout");
+        Button logoutBtn = new Button("Déconnexion");
         logoutBtn.getStyleClass().add("sidebar-button");
         logoutBtn.setMaxWidth(Double.MAX_VALUE);
         logoutBtn.setOnAction(e -> {

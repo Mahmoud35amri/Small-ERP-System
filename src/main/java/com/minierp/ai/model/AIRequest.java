@@ -1,11 +1,8 @@
 package com.minierp.ai.model;
 
-/**
- * Wrapper for user's natural language input to the AI agent.
- */
 public class AIRequest {
     private final String userMessage;
-    private final String language; // "en" or "fr"
+    private final String language;
 
     public AIRequest(String userMessage) {
         this.userMessage = userMessage;
@@ -25,14 +22,10 @@ public class AIRequest {
         return language;
     }
 
-    /**
-     * Simple language detection based on common French words.
-     */
     private String detectLanguage(String text) {
         if (text == null)
             return "en";
         String lower = text.toLowerCase();
-        // Common French words/patterns
         if (lower.contains("commande") || lower.contains("facture") ||
                 lower.contains("créer") || lower.contains("afficher") ||
                 lower.contains("aujourd'hui") || lower.contains("mois") ||

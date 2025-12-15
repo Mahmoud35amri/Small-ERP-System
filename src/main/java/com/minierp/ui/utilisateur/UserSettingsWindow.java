@@ -18,7 +18,7 @@ public class UserSettingsWindow {
     public static void show() {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.setTitle("User Settings");
+        dialog.setTitle("Paramètres Utilisateur");
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -30,11 +30,11 @@ public class UserSettingsWindow {
         PasswordField newPwdField = new PasswordField();
         PasswordField confirmPwdField = new PasswordField();
 
-        grid.addRow(0, new Label("Current Password:"), currentPwdField);
-        grid.addRow(1, new Label("New Password:"), newPwdField);
-        grid.addRow(2, new Label("Confirm Password:"), confirmPwdField);
+        grid.addRow(0, new Label("Mot de passe actuel:"), currentPwdField);
+        grid.addRow(1, new Label("Nouveau mot de passe:"), newPwdField);
+        grid.addRow(2, new Label("Confirmer mot de passe:"), confirmPwdField);
 
-        Button saveBtn = new Button("Update Password");
+        Button saveBtn = new Button("Mettre à jour");
         saveBtn.setOnAction(e -> {
             String current = currentPwdField.getText();
             String newVal = newPwdField.getText();
@@ -43,17 +43,17 @@ public class UserSettingsWindow {
             Utilisateur user = SessionService.getInstance().getConnectedUser();
 
             if (!user.getPassword().equals(current)) {
-                com.minierp.util.DialogHelper.showError("Current password is incorrect");
+                com.minierp.util.DialogHelper.showError("Mot de passe actuel incorrect");
                 return;
             }
 
             if (!newVal.equals(confirm)) {
-                com.minierp.util.DialogHelper.showError("New passwords do not match");
+                com.minierp.util.DialogHelper.showError("Les nouveaux mots de passe ne correspondent pas");
                 return;
             }
 
             if (newVal.isEmpty()) {
-                com.minierp.util.DialogHelper.showError("Password cannot be empty");
+                com.minierp.util.DialogHelper.showError("Le mot de passe ne peut pas être vide");
                 return;
             }
 

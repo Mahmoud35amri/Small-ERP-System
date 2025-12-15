@@ -62,7 +62,27 @@ public class FactureView extends BorderPane implements com.minierp.ui.Refreshabl
 
         Button btnPrint = new Button("Imprimer PDF");
         btnPrint.getStyleClass().add("secondary-button");
-        btnPrint.setOnAction(e -> DialogHelper.showSuccess("Impression simulée (PDF généré)"));
+        btnPrint.setOnAction(e -> {
+            Facture selected = table.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                DialogHelper.showWarning("Veuillez sélectionner une facture à imprimer.");
+                return;
+            }
+            try {
+                java.io.File file = factureController.genererPDF(selected.getId());
+                if (file != null) {
+                    DialogHelper.showSuccess("Facture générée : " + file.getAbsolutePath());
+                    if (java.awt.Desktop.isDesktopSupported()) {
+                        java.awt.Desktop.getDesktop().open(file);
+                    }
+                } else {
+                    DialogHelper.showError("Erreur lors de la génération de la facture.");
+                }
+            } catch (Exception ex) {
+                DialogHelper.showError("Erreur: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
 
         HBox toolbar = new HBox(10, btnPay, btnPrint);
         toolbar.setAlignment(Pos.CENTER_LEFT);
@@ -85,7 +105,7 @@ public class FactureView extends BorderPane implements com.minierp.ui.Refreshabl
         colMontant.setCellValueFactory(cellData -> new SimpleStringProperty(
                 String.format("%.2f €", cellData.getValue().getMontant())));
 
-        TableColumn<Facture, String> colStatus = new TableColumn<>("Status");
+        TableColumn<Facture, String> colStatus = new TableColumn<>("Statut");
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colStatus.setCellFactory(column -> new TableCell<Facture, String>() {
             @Override

@@ -110,7 +110,7 @@ public class CommandeView extends BorderPane implements com.minierp.ui.Refreshab
             return new SimpleStringProperty(c != null ? c.getNom() + " " + c.getPrenom() : "Inconnu");
         });
 
-        TableColumn<Commande, String> colStatus = new TableColumn<>("Status");
+        TableColumn<Commande, String> colStatus = new TableColumn<>("Statut");
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         TableColumn<Commande, String> colTotal = new TableColumn<>("Total TTC");
@@ -259,13 +259,6 @@ public class CommandeView extends BorderPane implements com.minierp.ui.Refreshab
         result.ifPresent(c -> {
             try {
                 commandeController.creer(c);
-                // Recalculate totals for lines as controller might expect them set or re-set
-                // Actually controller's ajouterLigne does calculation, but we set list
-                // directly.
-                // We should ensure totals are correct. The logic above sets them.
-                // However, CommandeController.creer just adds to list.
-                // We might need to ensure stock reservation isn't done here (it's done on
-                // validation).
                 DialogHelper.showSuccess("Commande créée");
                 refreshTable();
             } catch (Exception ex) {

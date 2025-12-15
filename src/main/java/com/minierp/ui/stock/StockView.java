@@ -43,7 +43,6 @@ public class StockView extends BorderPane implements com.minierp.ui.Refreshable 
     private void initializeUI() {
         SplitPane splitPane = new SplitPane();
 
-        // Left Side: Stock List
         VBox leftPane = new VBox(10);
         leftPane.setPadding(new Insets(10));
 
@@ -161,19 +160,6 @@ public class StockView extends BorderPane implements com.minierp.ui.Refreshable 
                 int qty = Integer.parseInt(qtyStr);
                 if (qty <= 0)
                     throw new NumberFormatException();
-
-                // Ensure SessionService is used if required by prompt, though controllers don't
-                // seem to need it for these methods based on my read.
-                // The prompt said: "All controller calls must include entrepriseId: int eid =
-                // SessionService.get().getEntrepriseId();"
-                // But looking at StockController methods: ajouter(int produitId, int qte) -> No
-                // entrepriseId.
-                // I will follow the controller signature I saw.
-                // If I need to pass entrepriseId, I'll check if there's an overload I missed or
-                // if I should just call it.
-                // Re-reading StockController.java: methods are ajouter(int, int), retirer(int,
-                // int), etc. No entrepriseId.
-                // I will stick to the existing methods.
 
                 switch (action) {
                     case "AJOUT":

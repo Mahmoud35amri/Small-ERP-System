@@ -33,28 +33,29 @@ public class UtilisateurView extends BorderPane implements com.minierp.ui.Refres
         setPadding(new Insets(20));
 
         // Top Bar
+        // Top Bar
         HBox topBar = new HBox(10);
-        SearchBar searchBar = new SearchBar("Search users...", this::filterTable);
+        SearchBar searchBar = new SearchBar("Rechercher...", this::filterTable);
 
-        Button addButton = new Button("New User");
+        Button addButton = new Button("Nouvel Utilisateur");
         addButton.setOnAction(e -> showDialog(null));
 
-        Button editButton = new Button("Edit");
+        Button editButton = new Button("Modifier");
         editButton.setOnAction(e -> {
             Utilisateur selected = table.getSelectionModel().getSelectedItem();
             if (selected != null)
                 showDialog(selected);
             else
-                com.minierp.util.DialogHelper.showWarning("Select a user to edit");
+                com.minierp.util.DialogHelper.showWarning("Sélectionnez un utilisateur");
         });
 
-        Button deleteButton = new Button("Delete");
+        Button deleteButton = new Button("Supprimer");
         deleteButton.setOnAction(e -> handleDelete());
 
-        Button resetPwdButton = new Button("Reset Password");
+        Button resetPwdButton = new Button("Réinitialiser MDP");
         resetPwdButton.setOnAction(e -> handleResetPassword());
 
-        Button lockButton = new Button("Lock/Unlock");
+        Button lockButton = new Button("Verrouiller/Déverrouiller");
         lockButton.setOnAction(e -> handleToggleLock());
 
         topBar.getChildren().addAll(searchBar, addButton, editButton, deleteButton, resetPwdButton, lockButton);
@@ -98,13 +99,13 @@ public class UtilisateurView extends BorderPane implements com.minierp.ui.Refres
             controller.modifier(e.getRowValue());
         });
 
-        TableColumn<Utilisateur, String> roleCol = new TableColumn<>("Role");
+        TableColumn<Utilisateur, String> roleCol = new TableColumn<>("Rôle");
         roleCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getRole()));
 
         TableColumn<Utilisateur, Boolean> actifCol = new TableColumn<>("Actif");
         actifCol.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().isActif()));
 
-        TableColumn<Utilisateur, LocalDateTime> lastLoginCol = new TableColumn<>("Dernier Connexion");
+        TableColumn<Utilisateur, LocalDateTime> lastLoginCol = new TableColumn<>("Dernière Connexion");
         lastLoginCol.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getDernierConnexion()));
 
         table.getColumns().addAll(idCol, nomCol, prenomCol, emailCol, roleCol, actifCol, lastLoginCol);
@@ -133,44 +134,44 @@ public class UtilisateurView extends BorderPane implements com.minierp.ui.Refres
     private void handleDelete() {
         Utilisateur selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            com.minierp.util.DialogHelper.showWarning("Select a user to delete");
+            com.minierp.util.DialogHelper.showWarning("Sélectionnez un utilisateur");
             return;
         }
-        if (com.minierp.util.DialogHelper.showConfirmation("Confirm Delete", "Delete " + selected.getNom() + "?")) {
+        if (com.minierp.util.DialogHelper.showConfirmation("Confirmer", "Supprimer " + selected.getNom() + " ?")) {
             controller.supprimer(selected);
             refresh();
-            com.minierp.util.DialogHelper.showSuccess("Deleted successfully");
+            com.minierp.util.DialogHelper.showSuccess("Supprimé avec succès");
         }
     }
 
     private void handleResetPassword() {
         Utilisateur selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            com.minierp.util.DialogHelper.showWarning("Select a user");
+            com.minierp.util.DialogHelper.showWarning("Sélectionnez un utilisateur");
             return;
         }
-        if (com.minierp.util.DialogHelper.showConfirmation("Reset Password",
-                "Reset password for " + selected.getNom() + " to '123456'?")) {
+        if (com.minierp.util.DialogHelper.showConfirmation("Réinitialiser",
+                "Réinitialiser le mot de passe de " + selected.getNom() + " ?")) {
             controller.resetPassword(selected);
-            com.minierp.util.DialogHelper.showSuccess("Password reset successfully");
+            com.minierp.util.DialogHelper.showSuccess("Mot de passe réinitialisé");
         }
     }
 
     private void handleToggleLock() {
         Utilisateur selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            com.minierp.util.DialogHelper.showWarning("Select a user");
+            com.minierp.util.DialogHelper.showWarning("Sélectionnez un utilisateur");
             return;
         }
         controller.toggleLock(selected);
         refresh();
-        com.minierp.util.DialogHelper.showSuccess("User status updated");
+        com.minierp.util.DialogHelper.showSuccess("Statut mis à jour");
     }
 
     private void showDialog(Utilisateur user) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.setTitle(user == null ? "New User" : "Edit User");
+        dialog.setTitle(user == null ? "Nouvel Utilisateur" : "Modifier Utilisateur");
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -187,19 +188,19 @@ public class UtilisateurView extends BorderPane implements com.minierp.ui.Refres
 
         // Validation
         ValidationSupport validationSupport = new ValidationSupport();
-        validationSupport.registerValidator(nomField, Validator.createEmptyValidator("Nom is required"));
-        validationSupport.registerValidator(emailField, Validator.createEmptyValidator("Email is required"));
+        validationSupport.registerValidator(nomField, Validator.createEmptyValidator("Nom requis"));
+        validationSupport.registerValidator(emailField, Validator.createEmptyValidator("Email requis"));
 
-        grid.addRow(0, new Label("Nom:"), nomField);
-        grid.addRow(1, new Label("Prenom:"), prenomField);
-        grid.addRow(2, new Label("Email:"), emailField);
-        grid.addRow(3, new Label("Role:"), roleBox);
-        grid.addRow(4, new Label("Actif:"), actifBox);
+        grid.addRow(0, new Label("Nom :"), nomField);
+        grid.addRow(1, new Label("Prénom :"), prenomField);
+        grid.addRow(2, new Label("Email :"), emailField);
+        grid.addRow(3, new Label("Rôle :"), roleBox);
+        grid.addRow(4, new Label("Actif :"), actifBox);
 
-        Button saveBtn = new Button("Save");
+        Button saveBtn = new Button("Enregistrer");
         saveBtn.setOnAction(e -> {
             if (validationSupport.isInvalid()) {
-                com.minierp.util.DialogHelper.showError("Please fix validation errors");
+                com.minierp.util.DialogHelper.showError("Erreur de validation");
                 return;
             }
             try {
@@ -224,9 +225,9 @@ public class UtilisateurView extends BorderPane implements com.minierp.ui.Refres
                 }
                 refresh();
                 dialog.close();
-                com.minierp.util.DialogHelper.showSuccess("User Created with password: " + tempPassword);
+                com.minierp.util.DialogHelper.showSuccess("Utilisateur créé. Mot de passe : " + tempPassword);
             } catch (Exception ex) {
-                com.minierp.util.DialogHelper.showError("Error: " + ex.getMessage());
+                com.minierp.util.DialogHelper.showError("Erreur : " + ex.getMessage());
             }
         });
 
