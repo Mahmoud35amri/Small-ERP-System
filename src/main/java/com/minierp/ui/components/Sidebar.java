@@ -29,6 +29,7 @@ public class Sidebar extends VBox {
         addNavButton("Fournisseurs", "fournisseur");
         addNavButton("Commandes", "Commande");
         addNavButton("Factures", "Facture");
+        addNavButton("🤖 AI Assistant", "AIAssistant");
 
         Button settingsBtn = new Button("Settings");
         settingsBtn.getStyleClass().add("sidebar-button");

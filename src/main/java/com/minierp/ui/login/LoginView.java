@@ -27,11 +27,11 @@ public class LoginView extends VBox {
 
         emailField = new TextField();
         emailField.setPromptText("Email");
-        emailField.setText("admin@techsolutions.com"); // Pre-fill for convenience
+        emailField.setText("mohamed@techexpert.tn"); // Pre-fill for convenience
 
         passwordField = new PasswordField();
         passwordField.setPromptText("Password");
-        passwordField.setText("admin123"); // Pre-fill
+        passwordField.setText("123456"); // Pre-fill
 
         Button loginButton = new Button("Login");
         loginButton.setMaxWidth(Double.MAX_VALUE);

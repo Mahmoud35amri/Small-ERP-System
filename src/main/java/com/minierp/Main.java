@@ -26,6 +26,7 @@ public class Main extends Application {
         viewManager.setView("fournisseur", new com.minierp.ui.fournisseur.FournisseurView());
         viewManager.setView("Commande", new com.minierp.ui.commande.CommandeView());
         viewManager.setView("Facture", new com.minierp.ui.facture.FactureView());
+        viewManager.setView("AIAssistant", new com.minierp.ui.ai.AIAssistantView());
 
         viewManager.showLogin();
 
