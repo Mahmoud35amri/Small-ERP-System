@@ -116,7 +116,7 @@ public class CommandeView extends BorderPane implements com.minierp.ui.Refreshab
         TableColumn<Commande, String> colTotal = new TableColumn<>("Total TTC");
         colTotal.setCellValueFactory(cellData -> {
             double total = commandeController.calculerTTC(cellData.getValue().getId());
-            return new SimpleStringProperty(String.format("%.2f €", total));
+            return new SimpleStringProperty(String.format("%.2f TND", total));
         });
 
         @SuppressWarnings("unchecked")
@@ -204,7 +204,7 @@ public class CommandeView extends BorderPane implements com.minierp.ui.Refreshab
             @Override
             protected void updateItem(Produit item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? "" : item.getNom() + " (" + item.getPrixVente() + "€)");
+                setText(empty || item == null ? "" : item.getNom() + " (" + item.getPrixVente() + "TND)");
             }
         });
         productCombo.setButtonCell(productCombo.getCellFactory().call(null));
